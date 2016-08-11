@@ -1,0 +1,6 @@
+# BiohazardProject
+A simple experimental project used to learn / try everything I could have in my brain ...
+
+Why Biohazard ?
+
+Probably because if you have the wrong idea of using even just a small part of my code is at your own risk...
