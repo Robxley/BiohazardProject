@@ -24,7 +24,7 @@ void VulkanApp::initWindow()
 
 void VulkanApp::mainLoop() 
 {
-	while (!glfwWindowShouldClose(window.GetGLFWwindow())) 
+	while (!glfwWindowShouldClose(window.GetWindow()))
 	{
 		glfwPollEvents();
 	}

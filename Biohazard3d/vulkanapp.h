@@ -17,7 +17,11 @@ namespace bhd
 		int height = 600;
 		std::string name = "biohazard";
 		void* ptr = nullptr;  //GLFWwindow*
-		GLFWwindow* GetGLFWwindow() { return (GLFWwindow*)ptr; }
+#ifdef _glfw3_h_
+		GLFWwindow* GetWindow() { return (GLFWwindow*)ptr; }
+#else
+		void* GetWindow() { return (void*)ptr; }
+#endif
 	};
 
 	class BioVulkan
