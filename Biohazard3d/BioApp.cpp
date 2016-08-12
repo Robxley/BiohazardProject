@@ -1,28 +1,26 @@
-#include "vulkanapp.h"
+#include "BioApp.h"
 
 
 using namespace bhd;
 
-VulkanApp::VulkanApp()
+BioApp::BioApp()
 {
 }
 
 
-VulkanApp::~VulkanApp()
+BioApp::~BioApp()
 {
 }
 
-void VulkanApp::initWindow()
+void BioApp::initWindow()
 {
-	glfwInit();
-
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
 	window.ptr = glfwCreateWindow(window.width, window.height, window.name.c_str(), nullptr, nullptr);
 }
 
-void VulkanApp::mainLoop() 
+void BioApp::mainLoop()
 {
 	while (!glfwWindowShouldClose(window.GetWindow()))
 	{
@@ -30,7 +28,7 @@ void VulkanApp::mainLoop()
 	}
 }
 
-void VulkanApp::initVulKan()
+void BioApp::initVulKan()
 {
-
+	
 }

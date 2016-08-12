@@ -2,11 +2,13 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-//#include <vulkan/vulkan.h>
+#include "BioVulkan.h"
 
 #include <iostream>
 #include <stdexcept>
 #include <functional>
+#include <memory>
+
 
 namespace bhd
 {
@@ -24,18 +26,11 @@ namespace bhd
 #endif
 	};
 
-	class BioVulkan
+	class BioApp
 	{
 	public:
-
-	};
-
-
-	class VulkanApp
-	{
-	public:
-		VulkanApp();
-		~VulkanApp();
+		BioApp();
+		~BioApp();
 
 		void initApp()
 		{
@@ -57,6 +52,7 @@ namespace bhd
 		
 	private:
 		BioWindow window;
+		BioVulkan vulkan;
 	};
 }
 

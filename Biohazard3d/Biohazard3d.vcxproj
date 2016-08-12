@@ -11,11 +11,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="vulkanapp.cpp" />
+    <ClCompile Include="BioVulkan.cpp" />
+    <ClCompile Include="BioApp.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="vulkanapp.h" />
+    <ClInclude Include="BioVulkan.h" />
+    <ClInclude Include="BioApp.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7714F54C-6B2F-4CD0-B509-653B67A322AF}</ProjectGuid>

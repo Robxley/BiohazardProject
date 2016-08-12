@@ -1,4 +1,4 @@
-#include "vulkanapp.h"
+#include "BioApp.h"
 
 #include <iostream>
 
@@ -6,7 +6,7 @@ using namespace bhd;
 
 int main() 
 {
-	VulkanApp app;
+	BioApp app;
 
 	try {
 		app.run();
