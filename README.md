@@ -8,5 +8,12 @@ Probably because if you have the wrong idea of using even just a small variable 
 
 
 The beginning.
-For now, I'm reading tutorials like this site https://vulkan-tutorial.com/, and sometimes, the Vulkan standard but it's boring.
+For now, I'm reading tutorials like :
+  https://vulkan-tutorial.com/, 
+  https://software.intel.com/en-us/articles/api-without-secrets-introduction-to-vulkan-preface#,
+and sometimes, the Vulkan standard but it's boring...
+
+My first try.
+Play with GLFW and the vulkan instance.
+
 Next soon...(maybe)
