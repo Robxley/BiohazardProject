@@ -1,4 +1,4 @@
-#include "BioApp.h"
+#include "BioApp.hpp"
 
 
 using namespace bhd;
@@ -30,5 +30,5 @@ void BioApp::mainLoop()
 
 void BioApp::initVulKan()
 {
-	
+	vulkan.init();
 }

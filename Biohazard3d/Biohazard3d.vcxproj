@@ -13,11 +13,15 @@
   <ItemGroup>
     <ClCompile Include="BioVulkan.cpp" />
     <ClCompile Include="BioApp.cpp" />
+    <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BioVulkan.h" />
-    <ClInclude Include="BioApp.h" />
+    <ClInclude Include="Assertion.hpp" />
+    <ClInclude Include="BioVulkan.hpp" />
+    <ClInclude Include="BioApp.hpp" />
+    <ClInclude Include="Common.hpp" />
+    <ClInclude Include="Logger.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7714F54C-6B2F-4CD0-B509-653B67A322AF}</ProjectGuid>

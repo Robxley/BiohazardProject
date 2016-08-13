@@ -1,18 +1,21 @@
-#include "BioApp.h"
 
+#include "Logger.hpp"
+
+#include "BioApp.hpp"
 #include <iostream>
 
 using namespace bhd;
 
 int main() 
 {
+	BioVulkan::info();
 	BioApp app;
 
 	try {
 		app.run();
 	}
 	catch (const std::runtime_error& e) {
-		std::cerr << e.what() << std::endl;
+		BHD_LOG_ERROR(e.what());
 		return EXIT_FAILURE;
 	}
 
