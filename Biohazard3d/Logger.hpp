@@ -23,6 +23,7 @@
 
 #include "Assertion.hpp"
 #include "Singleton.hpp"
+#include <iomanip>
 namespace bhd
 {
 	/*!
@@ -38,17 +39,22 @@ namespace bhd
 	{
 	protected:
 		T log;
+
+		//field width -> std::setw(n*step);
+		int n_field ;	
+		int step_field;	
 		/**
 		*\~english
 		*\brief		Private Constructor - Creates the file define by the macro BH3D_LOGGER_FILE.
 		*\~french
 		*\brief		Private Constructor - Créée le fichier défini par la macro BH3D_LOGGER_FILE.
 		*/
-		BasicLogger(void *data = nullptr) : log(init(data))
+		BasicLogger(void *data = nullptr) : log(init(data)), n_field(0), step_field(5)
 		{ 		
 			log << "  ================================"	<< std::endl;
 			log << "   Biohazard - Logger - START "		<< std::endl;
 			log << "  ================================"	<< std::endl << std::endl;
+
 		}
 
 		/**
@@ -75,8 +81,29 @@ namespace bhd
 
 	public:
 
-		T& getLogger() { return log; }
+		T& getLogger() { 
+			log << std::setw(n_field*step_field)<<"";
+			return log; 
+		}
 
+		void setStepField(int step)  {
+			if (step > 0) step_field = step;
+		}
+
+		void resetPushPop() { 
+			n_field = 0; 
+		}
+
+		void pushField() { 
+			n_field++; 
+			if (n_field < 0) n_field = 0; 
+		}
+		void popField() { 
+			n_field--; 
+			if (n_field < 0) n_field = 0; 
+		}
+
+		auto Field() { return std::setw(n_field*step_field) };
 	};
 
 }
@@ -134,6 +161,10 @@ namespace bhd
 #define BHD_LOG(msg)			{bhd::Logger::instance().getLogger()<<msg<<std::endl;}
 #define BHD_LOG_ERROR(msg)		{bhd::Logger::instance().getLogger()<<"<ERROR> --"<<msg<<" -- FUNC <"<<__FUNCTION__<<"> -- FILE <"<<__FILE__<<"> -- LINE <"<<__LINE__<<">"<<std::endl;}
 #define BHD_LOG_WARNING(msg)	{bhd::Logger::instance().getLogger()<<"<WARNING> --"<<msg<<" -- FUNC <"<<__FUNCTION__<<"> -- FILE <"<<__FILE__<<"> -- LINE <"<<__LINE__<<">"<<std::endl;}
+#define BHD_LOG_PUSH			{bhd::Logger::instance().pushField();}
+#define BHD_LOG_POP				{bhd::Logger::instance().popField();}
+#define BHD_LOG_RESET_PP		{bhd::Logger::instance().resetPushPop();}
+#define BHD_LOG_STEP_PP(n)		{bhd::Logger::instance().setStepField(n);}
 
 #endif	//BHD_VERBOSE
 

@@ -9,11 +9,10 @@
 
 #include <vector>
 #include <string>
-
+#include <functional>
 
 namespace bhd
 {
-
 	//Useful struct to get a valid const char ** pointer from a string vector
 	class PPVulkanMaker
 	{
@@ -36,37 +35,74 @@ namespace bhd
 	};
 
 
-	inline std::vector<const char*> getRequiredExtensions(bool enableValidationLayers)
+	//Vulkan basic object
+	template<typename T, typename C = std::function<VkResult(T&)>, typename D = std::function<void(T)>>
+	class VulkanObject
 	{
-		std::vector<const char*> extensions;
+	protected:
+		T object = { VK_NULL_HANDLE };
+		C create{ nullptr };
+		D destroy{ nullptr };
+	public:
+		VulkanObject(){}
+		~VulkanObject() { release(); }
 
-		unsigned int glfwExtensionCount = 0;
-		const char** glfwExtensions;
-		glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
-
-		for (unsigned int i = 0; i < glfwExtensionCount; i++) {
-			extensions.push_back(glfwExtensions[i]);
+		VkResult init()
+		{
+			return create(object);
 		}
 
-		if (enableValidationLayers) {
-			extensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+		void release()
+		{
+			if(object != VK_NULL_HANDLE)
+				destroy(object);
+
+			object = VK_NULL_HANDLE;
 		}
 
-		return extensions;
-	}
+		operator T()
+		{
+			return object;
+		}
+
+		//To check if the given list of extensions is include in the other
+		static bool checkAvailability(const std::vector<std::string> & exts, const std::vector<std::string> & vulkanExts)
+		{
+			bool availability = true;
+			for (const auto & ext : exts)
+			{
+				bool isHere = false;
+				for (const auto & vext : vulkanExts)
+				{
+					if (std::string(ext).compare(std::string(vext)) == 0)
+					{
+						BHD_LOG("\t" << ext << ": OK");
+						isHere = true;
+						continue;
+					}
+				}
+				if (!isHere)
+				{
+					BHD_LOG_WARNING(ext << ": Not available");
+					availability = false;
+				}
+			}
+			return availability;
+		}
+	};
+
 
 
 //Debug vulkan tools
 //----------------------------------------------
 
 #ifdef _DEBUG
-	class CDebugVulkanLayer
+	class DebugVulkanLayer
 	{
 
 	public:
-
-		CDebugVulkanLayer(VkInstance _instance): instance(_instance) {}
-		~CDebugVulkanLayer()
+		DebugVulkanLayer(VkInstance _instance = VK_NULL_HANDLE): instance(_instance) {}
+		~DebugVulkanLayer()
 		{
 			release();
 		}
@@ -79,11 +115,32 @@ namespace bhd
 			nullptr																//userdata
 		};
 
+		void release()
+		{
+			if (debugReportCallback != VK_NULL_HANDLE)
+			{
+				auto vkDestroyDebugReportCallbackEXT = (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugReportCallbackEXT");
+				if (vkDestroyDebugReportCallbackEXT != nullptr)
+					vkDestroyDebugReportCallbackEXT(instance, debugReportCallback, nullptr);
+				else
+				{
+					BHD_THROW_WITH_LOG("vkDestroyDebugReportCallbackEXT == nullptr")
+				}
+			}
+			debugReportCallback = VK_NULL_HANDLE;
+		}
+
+
 		VkResult initDebugReportCallback(VkInstance _instance = VK_NULL_HANDLE)
 		{
 			release();
 			if (_instance != VK_NULL_HANDLE) instance = _instance;
-			return vkCreateDebugReportCallbackEXT(instance, &createInfo, nullptr, &debugReportCallback);
+			BHD_ASSERT_LOG(_instance != VK_NULL_HANDLE, "Instance is VK_NULL_HANDLE");
+			auto vkCreateDebugReportCallbackEXT = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT");
+			if (vkCreateDebugReportCallbackEXT != nullptr)
+				return vkCreateDebugReportCallbackEXT(instance, &createInfo, nullptr, &debugReportCallback);
+			else
+				return VK_ERROR_EXTENSION_NOT_PRESENT;
 		}
 
 	private:
@@ -99,14 +156,6 @@ namespace bhd
 		{
 			BHD_LOG_ERROR("Bug layer: " << msg);
 			return VK_FALSE;
-		}
-
-		void release()
-		{
-			if (debugReportCallback != VK_NULL_HANDLE)
-				vkDestroyDebugReportCallbackEXT(instance, debugReportCallback, nullptr);
-
-			debugReportCallback = VK_NULL_HANDLE;
 		}
 
 		VkDebugReportCallbackEXT debugReportCallback = { VK_NULL_HANDLE };
@@ -143,6 +192,6 @@ namespace bhd
 			}
 		return true;
 	}
-*/
+	*/
 }
 #endif //_BHD_VULKANTOOLS_H

@@ -8,7 +8,7 @@ using namespace bhd;
 
 int main() 
 {
-	BioVulkan::info();
+	VulkanInstance::info();
 	BioApp app;
 
 	try {
