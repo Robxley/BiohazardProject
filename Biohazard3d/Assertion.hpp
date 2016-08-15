@@ -41,7 +41,7 @@
 #pragma once
 
 #include <cassert>
-#include "Logger.hpp"
+
 
 /**
 *\~english
@@ -61,7 +61,9 @@
 #define BHD_ASSERT_LOG_R(w,msg,r) 
 #endif
 
-#define BHD_THROW_WITH_LOG(msg) {BHD_LOG_ERROR(msg); throw std::runtime_error(msg);}
+#include "Logger.hpp"
+#include <sstream>
+#define BHD_THROW_WITH_LOG(msg) {BHD_LOG_ERROR(msg); std::ostringstream a; a << "msg"; throw std::runtime_error(a.str().c_str());}
 
 #endif //_BHD_ASSERTION_H
 

@@ -2,24 +2,27 @@
 #define _BHD_BIOVULKAN_H
 #pragma once
 
-#include "Assertion.hpp"
-
 #include <functional>
 #include <stdexcept>
 #include <vector>
 #include <iostream>
 #include <string>
+#include <algorithm>
 
-#define GLFW_INCLUDE_VULKAN
+//#define GLFW_INCLUDE_VULKAN
+#include "vulkan\vulkan.h"
 #include <GLFW/glfw3.h>
-//#include "vulkan\vulkan.h"
+
 
 namespace bhd
 {
-
 	class BioVulkan
 	{
 	public:
+		//Main BioVulkan functions
+		//-------------------------------------
+		//------------------------------------
+
 		BioVulkan() {}
 		~BioVulkan() { release(); }
 
@@ -31,43 +34,56 @@ namespace bhd
 		}
 
 		VkResult init();
+
+
+	public:
+		//Vulkan setting function
+		//--------------------------------------
+		//--------------------------------------
+
+		//Get available instance extensions and layers.
+		static std::vector<std::string> getAvailableExtensions();
+		static std::vector<std::string> getAvailableLayers();
+
+		//Log the results of getAvailableExtensions and getAvailableLayers
 		static void info();
 
-		std::vector<const char*> extensions = getExtensions();
-		std::vector<const char*> layers;
+		//By default the layers are only used in debug
 
+		//Extensions and layers to init with vulkan
+		std::vector<std::string> extensions = getRequiredInstanceExtensions();
+		std::vector<std::string> layers = { 
+#ifdef _DEBUG
+			"VK_LAYER_LUNARG_standard_validation" 
+#endif
+		};
 
-		bool checkSupport(const std::vector<const char*> & exts, const std::vector<const char*> & vulkanExts);
+		//To check if the given list of extensions or layers is available
+		bool checkAvailability(const std::vector<std::string> & exts, const std::vector<std::string> & vulkanExts);
 
+	private:
 
+#ifdef _glfw3_h_
 		//GLFW stuffs
 		//------------------------------------------------------------------------
-		static std::vector<const char*> getExtensions()
+		std::vector<std::string> getGlfwRequiredInstanceExtensions();
+		std::vector<std::string> getRequiredInstanceExtensions()
 		{
-				uint32_t n = 0;
-				std::vector<const char*> exts;
-				if (glfwInit() != GLFW_TRUE) { BHD_THROW_WITH_LOG("Failed on glfwInit"); }
-				const char ** glwfexts = glfwGetRequiredInstanceExtensions(&n);
-				exts.reserve(n+1);
-				BHD_LOG("GLFW required instance extensions : ");
-				for (uint32_t i = 0; i < n; i++) 
-				{ 
-					exts.push_back(glwfexts[i]);
-					BHD_LOG("\t" << glwfexts[i]);
-				}
-
-				BHD_LOG("Debug extension : ");
-				BHD_LOG("\t" << VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
-				exts.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
-				return exts;
+			return std::move(getGlfwRequiredInstanceExtensions());
 		}
-	
+#else
+		std::vector<std::string> getRequiredInstanceExtensions()
+		{
+			return std::vector<std::string>();
+		}
+#endif
+
 
 		//Vulkan stuffs
 		//------------------------------------------------------------------------
 		//------------------------------------------------------------------------
 
-		//All stuffs about vulkan instance
+		//Vulkan instance stuffs
 		//--------------------------------------
 
 		//Vulkan Instance to create
@@ -84,35 +100,14 @@ namespace bhd
 			VK_API_VERSION_1_0						//apiVersion
 		};
 
-		//Instance Create info struct
-		VkInstanceCreateInfo instanceCreateInfo = {
-			VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,			//sType
-			nullptr,										//pNext
-			0,												//flags
-			&appInfo,										//pApplicationInfo
-			(uint32_t)layers.size(),						//enabledLayerCount
-			layers.empty() ? nullptr : &layers[0],			//ppEnabledLayerNames
-			(uint32_t)extensions.size(),					//enabledExtensionCount
-			extensions.empty() ? nullptr : &extensions[0]	//ppEnabledExtensionNames
-		};
 
-		static std::vector<const char*>&& checkInstanceExtensions();
-
-
-		//All stuffs about vulkan layouts
-		//--------------------------------------
-
-#ifdef NDEBUG
-		const bool enableValidationLayers = false;
-#else
-		const bool enableValidationLayers = true;
+		//debug
+#ifdef _DEBUG
 #endif
 
-
-		static std::vector<const char*>&& checkValidationLayers();
-
-
+		
 	}; //class BioVulkan
+
 }
 
 #endif //_BHD_BIOVULKAN_H
