@@ -21,9 +21,8 @@ namespace bhd
 	class BioVulkan
 	{
 	public:
-		//Main BioVulkan functions
+		//Main functions
 		//-------------------------------------
-		//------------------------------------
 
 		BioVulkan() {}
 		~BioVulkan() { 
@@ -34,23 +33,19 @@ namespace bhd
 
 		VkResult init(const std::vector<std::string> & extensions, const std::vector<std::string> & layers = {});
 
-		VkResult initWithGlfw()
-		{
-#ifdef _DEBUG
-			return init(getGlfwRequiredInstanceExtensions(), { "VK_LAYER_LUNARG_standard_validation" });
-#else
-			return init(getGlfwRequiredInstanceExtensions());
-#endif
-		}
+		//Call init function with extensions and layers required by GLFW
+
+
+	public:
+		//GLFW functions
+		//------------------------------------------------------------------------
+		
+		//Call init function with extensions and layers required by GLFW
+		VkResult initWithGlfw();		
+		std::vector<std::string> getGlfwRequiredInstanceExtensions();
+
 
 	private:
-
-#ifdef _glfw3_h_
-		//GLFW stuffs
-		//------------------------------------------------------------------------
-		std::vector<std::string> getGlfwRequiredInstanceExtensions();
-#endif
-
 		//Vulkan stuffs
 		//------------------------------------------------------------------------
 		//------------------------------------------------------------------------

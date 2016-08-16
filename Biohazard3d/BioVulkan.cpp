@@ -1,5 +1,6 @@
 #include "BioVulkan.hpp"
 #include "VulkanTools.hpp"
+#include "VulkanDevice.hpp"
 
 using namespace bhd;
 
@@ -12,22 +13,29 @@ VkResult BioVulkan::init(const std::vector<std::string> & extensions, const std:
 	instance.extensions = extensions;
 	instance.layers = layers;
 
+	//result log tool
 	auto resultTest = [&](const char * msg) {
 		if (result != VK_SUCCESS) {
-			BHD_LOG(msg << ": FAIL"); }
+			BHD_THROW_WITH_LOG(msg << ": FAIL"); }
 		else {
 			BHD_LOG(msg << ": OK"); }
 	};
 
+	//Vulkan instance
 	result = instance.init();
 	resultTest("Vulkan Create Instance");
 
+	//Vulkan Debug report layer
 #if _DEBUG
 	result = debugVulkanLayer.initDebugReportCallback(instance);
 	resultTest("Debug Vulkan Layer");
 #endif
 
-	BHD_LOG_POP;
+	//Vulkan physical device
+	VulkanPhysicalDevice::savePhysicalDeviceStuffs(instance);
+	std::vector<std::string> names = VulkanPhysicalDevice::physicalDeviceStuffs;
+
+	BHD_LOG_LIST("Available Physical Devices :", names);
 	return VK_SUCCESS;
 }
 
@@ -36,12 +44,24 @@ void BioVulkan::release()
 #ifdef _DEBUG
 	debugVulkanLayer.release();
 #endif
-
 	instance.release();
 }
 
 
+//GLFW stuffs
+//------------------------------------------------------------------------
 #ifdef _glfw3_h_
+
+VkResult BioVulkan::initWithGlfw()
+{
+#ifdef _DEBUG
+	return init(getGlfwRequiredInstanceExtensions(), { "VK_LAYER_LUNARG_standard_validation" });
+#else
+	return init(getGlfwRequiredInstanceExtensions());
+#endif
+
+}
+
  std::vector<std::string> BioVulkan::getGlfwRequiredInstanceExtensions()
 {
 	uint32_t n = 0;
@@ -73,5 +93,17 @@ void BioVulkan::release()
 	BHD_LOG_POP;
 	BHD_LOG_POP;
 	return std::move(exts);
+}
+#else
+
+#define BHD_WDYE_GLFW {BHD_ASSERT_LOG(0, "what did you expect ? GLFW not available")}
+
+VkResult BioVulkan::initWithGlfw()
+{
+	BHD_WDYE_GLFW;
+}
+std::vector<std::string> BioVulkan::getGlfwRequiredInstanceExtensions()
+{
+	BHD_WDYE_GLFW;
 }
 #endif

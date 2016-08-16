@@ -91,7 +91,7 @@ namespace bhd
 		}
 
 		void resetPushPop() { 
-			n_field = 0; 
+			n_field = 0;
 		}
 
 		void pushField() { 
@@ -103,7 +103,7 @@ namespace bhd
 			if (n_field < 0) n_field = 0; 
 		}
 
-		auto Field() { return std::setw(n_field*step_field) };
+		auto Field() { return std::setw(n_field*step_field); }
 	};
 
 }
@@ -158,13 +158,14 @@ namespace bhd
 
 
 #define BHD_LOG_INSTANCE(data)	{bhd::Logger::instance((void*)data);}
-#define BHD_LOG(msg)			{bhd::Logger::instance().getLogger()<<msg<<std::endl;}
-#define BHD_LOG_ERROR(msg)		{bhd::Logger::instance().getLogger()<<"<ERROR> --"<<msg<<" -- FUNC <"<<__FUNCTION__<<"> -- FILE <"<<__FILE__<<"> -- LINE <"<<__LINE__<<">"<<std::endl;}
-#define BHD_LOG_WARNING(msg)	{bhd::Logger::instance().getLogger()<<"<WARNING> --"<<msg<<" -- FUNC <"<<__FUNCTION__<<"> -- FILE <"<<__FILE__<<"> -- LINE <"<<__LINE__<<">"<<std::endl;}
 #define BHD_LOG_PUSH			{bhd::Logger::instance().pushField();}
 #define BHD_LOG_POP				{bhd::Logger::instance().popField();}
 #define BHD_LOG_RESET_PP		{bhd::Logger::instance().resetPushPop();}
 #define BHD_LOG_STEP_PP(n)		{bhd::Logger::instance().setStepField(n);}
+#define BHD_LOG(msg)			{bhd::Logger::instance().getLogger()<<msg<<std::endl;}
+#define BHD_LOG_ERROR(msg)		BHD_LOG("<ERROR> --"<<msg<<" -- FUNC <"<<__FUNCTION__<<"> -- FILE <"<<__FILE__<<"> -- LINE <"<<__LINE__<<">")
+#define BHD_LOG_WARNING(msg)	BHD_LOG("<WARNING> --"<<msg<<" -- FUNC <"<<__FUNCTION__<<"> -- FILE <"<<__FILE__<<"> -- LINE <"<<__LINE__<<">")
+#define BHD_LOG_LIST(title,list){BHD_LOG(title); BHD_LOG_PUSH; for(const auto & one:list){BHD_LOG(one)}; BHD_LOG_POP;}	
 
 #endif	//BHD_VERBOSE
 

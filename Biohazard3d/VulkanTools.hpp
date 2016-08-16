@@ -76,7 +76,7 @@ namespace bhd
 				{
 					if (std::string(ext).compare(std::string(vext)) == 0)
 					{
-						BHD_LOG("\t" << ext << ": OK");
+						BHD_LOG(ext << ": OK");
 						isHere = true;
 						continue;
 					}

@@ -28,21 +28,24 @@ VkResult VulkanInstance::validation()
 {
 	VkResult avaiblable = VK_SUCCESS;
 	BHD_LOG("Extension Validation :");
+	BHD_LOG_PUSH;
 	if (!checkAvailability(extensions, getAvailableExtensions()))	//Check if all required extension are available
 	{
 		avaiblable = VK_ERROR_LAYER_NOT_PRESENT;
 		BHD_THROW_WITH_LOG("Some layers requests are not available!")
 	}
-
+	BHD_LOG_POP;
 
 	if (!layers.empty())											//Check if all required layers are available
 	{
 		BHD_LOG("Layer Validation :");
+		BHD_LOG_PUSH;
 		if (!checkAvailability(layers, getAvailableLayers()))
 		{
 			avaiblable = VK_ERROR_EXTENSION_NOT_PRESENT;
 			BHD_THROW_WITH_LOG("Some layers requests are not available!")
 		}
+		BHD_LOG_POP;
 	}
 	return avaiblable;
 }
@@ -79,28 +82,13 @@ std::vector<std::string> VulkanInstance::getAvailableLayers()
 void VulkanInstance::info()
 {
 	BHD_LOG("About Vulkan:");
-	BHD_LOG_PUSH
-		auto print = [](const std::vector<std::string> & names)
-	{
-		BHD_LOG_PUSH
-			for (auto & name : names) {
-				BHD_LOG(name)
-			}
-		BHD_LOG(std::endl);
-		BHD_LOG_POP
-	};
+	BHD_LOG_PUSH;
+		
+	auto extensionNames = getAvailableExtensions();
+	BHD_LOG_LIST("Extensions:", extensionNames);
 
-	{
-		BHD_LOG("\tExtensions:");
-		auto extensionNames = getAvailableExtensions();
-		print(extensionNames);
-	}
+	auto layerNames = getAvailableLayers();
+	BHD_LOG_LIST("Layers:", extensionNames);
 
-	{
-		BHD_LOG("\tLayers:");
-		auto layerNames = getAvailableLayers();
-		print(layerNames);
-	}
-
-	BHD_LOG_POP
+	BHD_LOG_POP;
 }
