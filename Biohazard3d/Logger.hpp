@@ -3,6 +3,7 @@
 #pragma once
 
 //#define BHD_USE_FILE_LOG
+#define BHD_USE_COUT_FILE_LOG
 
 #ifdef _DEBUG
 #define BHD_VERBOSE		//Use to enable the logger
@@ -12,7 +13,7 @@
 
 #if defined(__ANDROID__) || defined(__IPHONEOS__) && defined(_SDL_H)
 	#define BHD_USE_SDL_LOG
-#elif defined(BHD_USE_FILE_LOG)
+#elif defined(BHD_USE_FILE_LOG) || defined(BHD_USE_COUT_FILE_LOG)
 	#ifndef BHD_LOG_FILE
 	#define BHD_LOG_FILE "Biohazard.log"	//default log file
 	#endif
@@ -51,9 +52,9 @@ namespace bhd
 		*/
 		BasicLogger(void *data = nullptr) : log(init(data)), n_field(0), step_field(5)
 		{ 		
-			log << "  ================================"	<< std::endl;
-			log << "   Biohazard - Logger - START "		<< std::endl;
-			log << "  ================================"	<< std::endl << std::endl;
+			log << "  ================================\n";
+			log << "   Biohazard - Logger - START\n";
+			log << "  ================================\n"<< std::flush;
 
 		}
 
@@ -66,9 +67,9 @@ namespace bhd
 		~BasicLogger() {
 			
 			log << std::endl;
-			log << "  ===============================" << std::endl;
-			log << "   Biohazard - Logger - END " << std::endl;
-			log << "  ===============================" << std::endl << std::endl;
+			log << "  ===============================\n";
+			log << "   Biohazard - Logger - END \n";
+			log << "  ===============================\n" << std::flush;
 		}
 
 		/**
@@ -105,7 +106,6 @@ namespace bhd
 
 		auto Field() { return std::setw(n_field*step_field); }
 	};
-
 }
 
 
@@ -131,6 +131,42 @@ namespace bhd
 	{
 		return std::cout;
 	}
+}
+#elif defined(BHD_USE_COUT_FILE_LOG)
+#include <fstream>
+#include <iostream>
+namespace bhd
+{
+	class StdoutFileLog : public std::ofstream
+	{
+	public:
+		StdoutFileLog(const char * data) : std::ofstream(data) {};
+	};
+
+	template<typename T>
+	StdoutFileLog& operator<< (StdoutFileLog& x, const T& y)
+	{
+		std::cout << y;
+		(std::ofstream &)x << y;
+		return x;
+	}
+
+	class Logger : public BasicLogger<StdoutFileLog, const char*>, public Singleton<Logger>
+	{
+		friend class Singleton<Logger>;
+	protected:
+		Logger(void *data) {}
+	};
+
+	//Specialisation
+	template <>
+	inline const char* BasicLogger<StdoutFileLog, const char*>::init(void *data)
+	{
+		const char * defaultfile = BHD_LOG_FILE;
+		return data == nullptr ? defaultfile : (const char*)data;
+	}
+
+	//class Logger : public BasicLogger<std::
 }
 
 #elif defined(BHD_USE_FILE_LOG)
@@ -162,11 +198,11 @@ namespace bhd
 #define BHD_LOG_POP				{bhd::Logger::instance().popField();}
 #define BHD_LOG_RESET_PP		{bhd::Logger::instance().resetPushPop();}
 #define BHD_LOG_STEP_PP(n)		{bhd::Logger::instance().setStepField(n);}
-#define BHD_LOG(msg)			{bhd::Logger::instance().getLogger()<<msg<<std::endl;}
+#define BHD_LOG(msg)			{bhd::Logger::instance().getLogger()<<msg<<"\n";}
 #define BHD_LOG_ERROR(msg)		BHD_LOG("<ERROR> --"<<msg<<" -- FUNC <"<<__FUNCTION__<<"> -- FILE <"<<__FILE__<<"> -- LINE <"<<__LINE__<<">")
 #define BHD_LOG_WARNING(msg)	BHD_LOG("<WARNING> --"<<msg<<" -- FUNC <"<<__FUNCTION__<<"> -- FILE <"<<__FILE__<<"> -- LINE <"<<__LINE__<<">")
 #define BHD_LOG_LIST(title,list){BHD_LOG(title); BHD_LOG_PUSH; for(const auto & one:list){BHD_LOG(one)}; BHD_LOG_POP;}	
-
+#define BHD_LOG_FIELD			 Logger::instance().Field()
 #endif	//BHD_VERBOSE
 
 #ifndef BHD_LOG_INSTANCE

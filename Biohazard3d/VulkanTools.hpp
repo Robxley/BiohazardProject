@@ -165,7 +165,6 @@ namespace bhd
 
 #endif
 
-
 /*
 #ifdef defined(__ANDROID__) || defined(__IPHONEOS__) || defined(__linux__ )
 #define VK_USE_PLATFORM_XCB_KHR
@@ -193,5 +192,5 @@ namespace bhd
 		return true;
 	}
 	*/
-}
+}  //namespace
 #endif //_BHD_VULKANTOOLS_H
