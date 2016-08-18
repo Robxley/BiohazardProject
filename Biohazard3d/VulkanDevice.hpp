@@ -7,16 +7,34 @@
 
 namespace bhd
 {
+
+	typedef std::vector<std::string> ExtensionNames;
+	typedef std::vector<std::string> LayerNames;
 	typedef std::vector<VkQueueFamilyProperties> QueueFamilyProperties;
-	
+
+
+
 	typedef struct PhysicalDeviceStuffs
 	{
-		const std::string *name;
-		const VkPhysicalDevice *physicalDevice;
-		const VkPhysicalDeviceProperties *properties;
-		const VkPhysicalDeviceFeatures *features;
-		const QueueFamilyProperties *queueFamilyProperties;
+		std::string *					name;
+		VkPhysicalDevice *				physicalDevice;
+		VkPhysicalDeviceProperties *	properties;
+		VkPhysicalDeviceFeatures *		features;
+		QueueFamilyProperties *			queueFamilyProperties;
 	} PhysicalDeviceStuffs;
+
+	/*
+	typedef struct BioDevice
+	{
+		VkInstance*				instance;
+		PhysicalDeviceStuffs	physicalDevice;
+		ExtensionNames			extensionNames;
+		LayerNames				layerNames;
+		QueueFamilyProperties	queueFamilyProperties;
+		VkDevice				devices;
+		VkQueue					queue;
+	} BioDevice;
+	*/
 
 	class PhysicalDeviceStuffList
 	{
@@ -41,7 +59,7 @@ namespace bhd
 		}
 
 		//clear all data
-		void clear() {
+		void release() {
 			physicalDeviceNames.clear();
 			physicalDevices.clear();
 			physicalDeviceProperties.clear();
@@ -79,17 +97,18 @@ namespace bhd
 		//std::vector<VkPhysicalDeviceMemoryProperties> physicalDeviceMemoryProperties;
 	private:
 		template< typename T>
-		const T* validVectorPtr(const std::vector<T> & data, int i)
+		T* validVectorPtr(std::vector<T> & data, int i)
 		{
 			return i < data.size() ? &data[i] : nullptr;
 		}
 	};
 
 
-	class VulkanPhysicalDevices
+	class VulkanDevices
 	{
 	public:
-		VulkanPhysicalDevices(const VkInstance & instance) { getPhysicalDeviceStuffs(instance); };
+		VulkanDevices(){}
+		VulkanDevices(VkInstance instance) { getPhysicalDeviceStuffs(instance); };
 		//Physical devices useful functions
 		//--------------------------------
 
@@ -122,7 +141,7 @@ namespace bhd
 
 		//call getAvailablePhysicalDevices and save the result in the static variable and return a reference on it
 		const std::vector<VkPhysicalDevice> & getAvailablePhysicalDevices(VkInstance instance){
-			clear();
+			release();
 			return physicalDeviceStuffs << inquireAvailablePhysicalDevices(instance);
 		}
 
@@ -172,7 +191,7 @@ namespace bhd
 
 		PhysicalDeviceStuffs getBestPhysicalDevice(VkInstance instance = VK_NULL_HANDLE)
 		{
-			if (instance != VK_NULL_HANDLE) clear();
+			if (instance != VK_NULL_HANDLE) release();
 			if (physicalDeviceStuffs.count() == 0)
 			{
 				getAvailablePhysicalDevices(instance);
@@ -183,14 +202,36 @@ namespace bhd
 			return pickByScore();
 		}
 
-		void clear() { physicalDeviceStuffs.clear(); }
-	public:
+
+
+		VkResult createLogicalDevice(const PhysicalDeviceStuffs & physicalDeviceStuffs, VkQueueFlags flag = VK_QUEUE_GRAPHICS_BIT, const std::vector<std::string> * extensions = nullptr, const std::vector<std::string> * layers = nullptr);
+
+		uint32_t getQueueFamilyIndex(const QueueFamilyProperties & queueFamilyProperties, VkQueueFlags flag = VK_QUEUE_GRAPHICS_BIT);
+		uint32_t getQueueFamilyIndex(const PhysicalDeviceStuffs & physicalDeviceStuffs, VkQueueFlags flag = VK_QUEUE_GRAPHICS_BIT) {
+			BHD_ASSERT_LOG(physicalDeviceStuffs.queueFamilyProperties != nullptr, "Empty pointer");
+			return getQueueFamilyIndex(*physicalDeviceStuffs.queueFamilyProperties, flag);
+		}
+
+		void release() {
+			physicalDeviceStuffs.release();
+			if (!logicalDevices.empty()) {
+				for (const auto & device : logicalDevices)
+					vkDestroyDevice(device,nullptr);
+			}
+		}
+	
+	private:
 		//Variables
 		//----------------------------------
 
 		// List of the Physical device stuffs
 		PhysicalDeviceStuffList physicalDeviceStuffs;
+
+		//logicalDevice
+		std::vector<VkDevice> logicalDevices;
+		std::vector<VkQueue>  logicalQueues;
 	};
+
 }
 
 #endif

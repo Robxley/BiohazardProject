@@ -192,7 +192,6 @@ namespace bhd
 
 #endif
 
-
 #define BHD_LOG_INSTANCE(data)	{bhd::Logger::instance((void*)data);}
 #define BHD_LOG_PUSH			{bhd::Logger::instance().pushField();}
 #define BHD_LOG_POP				{bhd::Logger::instance().popField();}

@@ -10,8 +10,8 @@ VulkanInstance::VulkanInstance()
 		auto result = validation();
 		if (result != VK_SUCCESS) return result;
 
-		PPVulkanMaker ppExtensions{ extensions };
-		PPVulkanMaker ppLayer{ layers };
+		VulkanPPMaker ppExtensions{ extensions };
+		VulkanPPMaker ppLayer{ layers };
 
 		instanceCreateInfo.enabledLayerCount = ppLayer.count();
 		instanceCreateInfo.ppEnabledLayerNames = ppLayer;

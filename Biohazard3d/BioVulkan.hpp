@@ -10,11 +10,12 @@
 #include <algorithm>
 
 //#define GLFW_INCLUDE_VULKAN
-#include "vulkan\vulkan.h"
+//#include "vulkan\vulkan.h"
 #include <GLFW/glfw3.h>
 
 #include "VulkanTools.hpp"
 #include "VulkanInstance.hpp"
+#include "VulkanDevice.hpp"
 
 namespace bhd
 {
@@ -57,6 +58,9 @@ namespace bhd
 #ifdef _DEBUG
 		DebugVulkanLayer debugVulkanLayer;
 #endif
+
+		//Devices
+		VulkanDevices devices;
 
 	}; //class BioVulkan
 

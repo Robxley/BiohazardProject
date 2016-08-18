@@ -32,17 +32,21 @@ VkResult BioVulkan::init(const std::vector<std::string> & extensions, const std:
 #endif
 
 	//Vulkan physical device
-	VulkanPhysicalDevices physicalDevices(instance);
-	std::vector<std::string> names = physicalDevices.physicalDeviceStuffs;
+
+	const std::vector<std::string> & names = (const std::vector<std::string> &)devices.getPhysicalDeviceStuffs(instance);
 	BHD_LOG_LIST("Available Physical Devices :", names);
-	auto pickedPhysicalDevices = physicalDevices.getBestPhysicalDevice();
+	auto pickedPhysicalDevices = devices.getBestPhysicalDevice();
 	BHD_LOG("Picked Physical Devices: "<<*pickedPhysicalDevices.name);
+
+	result = devices.createLogicalDevice(pickedPhysicalDevices);
+	resultTest("Vulkan Create logical device");
 
 	return VK_SUCCESS;
 }
 
 void BioVulkan::release()
 {
+	devices.release();
 #ifdef _DEBUG
 	debugVulkanLayer.release();
 #endif

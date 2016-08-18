@@ -14,24 +14,27 @@
 namespace bhd
 {
 	//Useful struct to get a valid const char ** pointer from a string vector
-	class PPVulkanMaker
+	class VulkanPPMaker
 	{
 	public:
-		PPVulkanMaker(const std::vector<std::string> & names) :strNames(names) {}
+		VulkanPPMaker(const std::vector<std::string> & names) : strNames(&names) {}
+		VulkanPPMaker(const std::vector<std::string> * names) : strNames(names) {}
+		
 		const char** data() {
-			if (strNames.empty()) return nullptr;
+			if (strNames == nullptr) return nullptr;
+			if (strNames->empty()) return nullptr;
 			ccNames.clear();
-			ccNames.reserve(strNames.size());
-			for (const auto & name : strNames) ccNames.push_back(name.c_str());
+			ccNames.reserve(strNames->size());
+			for (const auto & name : *strNames) ccNames.push_back(name.c_str());
 			return ccNames.data();
 		}
 		operator const char**() {
 			return data();
 		}
-		uint32_t count() { return (uint32_t)strNames.size(); }
+		uint32_t count() { return (strNames == nullptr)? 0 :(uint32_t)strNames->size(); }
 	private:
 		std::vector<const char*> ccNames;
-		const std::vector<std::string> & strNames;
+		const std::vector<std::string> * strNames;
 	};
 
 
@@ -154,6 +157,7 @@ namespace bhd
 			const char* msg,
 			void* userData)
 		{
+			std::cerr << msg << std::endl;
 			BHD_LOG_ERROR("Bug layer: " << msg);
 			return VK_FALSE;
 		}
