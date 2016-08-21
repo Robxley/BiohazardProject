@@ -3,13 +3,14 @@
 #define _BHD_VULKANTOOLS_H
 #pragma once
 
-#include "Assertion.hpp"
-#include "Logger.hpp"
-#include <vulkan\vulkan.h>
-
 #include <vector>
 #include <string>
 #include <functional>
+
+#include <vulkan/vulkan.h>
+
+#include "Assertion.hpp"
+#include "Logger.hpp"
 
 namespace bhd
 {
@@ -37,64 +38,108 @@ namespace bhd
 		const std::vector<std::string> * strNames;
 	};
 
-
-	//Vulkan basic object
-	template<typename T, typename C = std::function<VkResult(T&)>, typename D = std::function<void(T)>>
-	class VulkanObject
+	template <typename T>
+	class Printer
 	{
-	protected:
-		T object = { VK_NULL_HANDLE };
-		C create{ nullptr };
-		D destroy{ nullptr };
 	public:
-		VulkanObject(){}
-		~VulkanObject() { release(); }
-
-		VkResult init()
+		void info(const char * title) const
 		{
-			return create(object);
-		}
-
-		void release()
-		{
-			if(object != VK_NULL_HANDLE)
-				destroy(object);
-
-			object = VK_NULL_HANDLE;
-		}
-
-		operator T()
-		{
-			return object;
-		}
-
-		//To check if the given list of extensions is include in the other
-		static bool checkAvailability(const std::vector<std::string> & exts, const std::vector<std::string> & vulkanExts)
-		{
-			bool availability = true;
-			for (const auto & ext : exts)
-			{
-				bool isHere = false;
-				for (const auto & vext : vulkanExts)
-				{
-					if (std::string(ext).compare(std::string(vext)) == 0)
-					{
-						BHD_LOG(ext << ": OK");
-						isHere = true;
-						continue;
-					}
-				}
-				if (!isHere)
-				{
-					BHD_LOG_WARNING(ext << ": Not available");
-					availability = false;
-				}
-			}
-			return availability;
+			const auto & list = static_cast<const T&>(*this);
+			BHD_LOG_LIST(title, list);
 		}
 	};
 
+	class InstanceExtensionNames : public std::vector<std::string>, public Printer<InstanceExtensionNames> {};
+	class InstanceLayerNames : public std::vector<std::string>, public Printer<InstanceLayerNames> {};
+	typedef std::vector<VkQueueFamilyProperties> QueueFamilyProperties;		//for one device
+	typedef std::vector<VkExtensionProperties> ExtensionProperties;			//for one device
+	class ExtensionNames : public std::vector<std::string>, public Printer<ExtensionNames> {
+	public:
+		ExtensionNames() {}
+		ExtensionNames(const std::vector<std::string> & extensionNames) :std::vector<std::string>(extensionNames) {}
+		ExtensionNames(const char*  extensionName) : std::vector<std::string>({ extensionName }) {}
+	};				
+	typedef std::vector<VkQueue>	DeviceQueues;
+	
+	typedef struct BioVulkanContext
+	{
+		//Instance stuffs
+		VkInstance				instance = VK_NULL_HANDLE;
+		InstanceExtensionNames	instanceExtensionNames;
+		InstanceLayerNames		instanceLayerNames;
 
+		//Surface stuff
+		VkSurfaceKHR			surface = VK_NULL_HANDLE;
+
+		//Device stuff
+		VkDevice				device = VK_NULL_HANDLE;
+		ExtensionNames			extensionNames;
+		QueueFamilyProperties	queueFamilyProperties;
+		DeviceQueues			deviceQueues;
+
+		//Some operators
+		operator VkInstance() const { return instance; }
+		operator const InstanceExtensionNames&() const { return instanceExtensionNames; }
+		operator const InstanceLayerNames&() const { return instanceLayerNames; }
+
+		operator VkSurfaceKHR() const { return surface; }
+
+		operator VkDevice() const { return device; }
+		operator const ExtensionNames&() const{ return extensionNames; };
+		operator const QueueFamilyProperties&() const { return queueFamilyProperties; };
+		operator DeviceQueues() const { return deviceQueues; };
+
+		void release()
+		{
+			//Container
+			deviceQueues.clear();
+			queueFamilyProperties.clear();
+			extensionNames.clear();
+			instanceLayerNames.clear();
+			instanceExtensionNames.clear();
+
+			//Vulkan objects (The order is important.)
+			if (device != VK_NULL_HANDLE) {
+				vkDestroyDevice(device, nullptr);
+				device = VK_NULL_HANDLE;
+			}
+			if (surface != VK_NULL_HANDLE) {
+				vkDestroySurfaceKHR(instance, surface, nullptr);
+				surface = VK_NULL_HANDLE;
+			}
+			if (instance != VK_NULL_HANDLE) {
+				vkDestroyInstance(instance, nullptr);
+				instance = VK_NULL_HANDLE;
+			}
+		}
+
+	} BioVulkanContext;
+	
+		
+	//To check if the given list of extensions is include in the other
+	static bool checkAvailability(const std::vector<std::string> & exts, const std::vector<std::string> & vulkanExts)
+	{
+		bool availability = true;
+		for (const auto & ext : exts)
+		{
+			bool isHere = false;
+			for (const auto & vext : vulkanExts)
+			{
+				if (std::string(ext).compare(std::string(vext)) == 0)
+				{
+					BHD_LOG(ext << ": OK");
+					isHere = true;
+					continue;
+				}
+			}
+			if (!isHere)
+			{
+				BHD_LOG_WARNING(ext << ": Not available");
+				availability = false;
+			}
+		}
+		return availability;
+	}
 
 //Debug vulkan tools
 //----------------------------------------------

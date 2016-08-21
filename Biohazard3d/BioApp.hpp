@@ -4,17 +4,15 @@
 #define _BHD_BIOAPP_H
 #pragma once
 
-
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
-
-#include "BioVulkan.hpp"
-
 #include <iostream>
 #include <stdexcept>
 #include <functional>
 #include <memory>
 
+#include <vulkan/vulkan.h>
+#include "GLFW/glfw3.h"
+
+#include "BioVulkan.hpp"
 
 namespace bhd
 {

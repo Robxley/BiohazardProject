@@ -2,36 +2,46 @@
 #define _BHD_VULKANSURFACE_H
 #pragma once
 
-#include "VulkanTools.hpp"
-
-#define GLFW_EXPOSE_NATIVE_WIN32
+#include <vulkan\vulkan.h>
 #include "GLFW\glfw3.h"
-#include <GLFW\glfw3native.h>
+
+#include "VulkanTools.hpp"
 
 namespace bhd
 {
 	class VulkanSurface
 	{
 	public:
-		VulkanSurface(VkInstance _instance = VK_NULL_HANDLE) : instance(_instance) {};
+		VulkanSurface(VkInstance _instance = VK_NULL_HANDLE) : instance(_instance), surface(VK_NULL_HANDLE){};
 		~VulkanSurface() { release(); }
 
-		VkResult init(VkInstance instance);
+#ifdef _glfw3_h_
+		VkResult initGlfw(VkInstance instance, GLFWwindow * window);
+		VkResult initWin32Glfw(VkInstance instance, GLFWwindow * window);
+#endif
+
+#ifdef _WIN32
+		VkResult initWin32(VkInstance instance, HWND hwnd, HINSTANCE hinstance = GetModuleHandle(nullptr));
+#endif
+
+		operator VkSurfaceKHR() {
+			return surface;
+		}
 
 		void release() {
-			vkDestroySurfaceKHR(instance, surface, nullptr);
+			if(surface!=VK_NULL_HANDLE)
+				vkDestroySurfaceKHR(instance, surface, nullptr);
+			surface = VK_NULL_HANDLE;
 		}
 	private:
 		VkSurfaceKHR surface;
 		VkInstance instance;
 
 	private:
-		//platform 
+		VkResult initInstance(VkInstance instance);
+//platform 
 #ifdef _WIN32
 		VkResult initWin32(HWND hwnd, HINSTANCE hinstance = GetModuleHandle(nullptr));
-		VkResult initWin32Glfw(GLFWwindow * win32) {
-			initWin32(glfwGetWin32Window(win32));
-		}
 #else
 		#warning "No implemented VK_KHR_surface"
 #endif

@@ -42,7 +42,6 @@
 
 #include <cassert>
 
-
 /**
 *\~english
 *\brief		Biohazard assertion macro
@@ -51,11 +50,11 @@
 *\brief		Macro assertion utilisée par biohazard
 *\param[in]	Expression à tester
 */
-#define BHD_ASSERT(w) assert(w);
+#define BHD_ASSERT(w)  {if(!(w)){ BHD_LOG_ERROR((#w));}} assert(w);
 
 #ifdef _DEBUG
-#define BHD_ASSERT_LOG(w,msg)	{if(!(w)){ BHD_LOG_ERROR(msg) ;}}
-#define BHD_ASSERT_LOG_R(w,msg,r) {if(!(w)){ BHD_LOG_ERROR(msg) ; return r;}}
+#define BHD_ASSERT_LOG(w,msg)	{BHD_ASSERT(w); if(!(w)){ BHD_LOG_ERROR(msg) ;}}
+#define BHD_ASSERT_LOG_R(w,msg,r) {BHD_ASSERT(w); if(!(w)){ BHD_LOG_ERROR(msg) ; return r;}}
 #else
 #define BHD_ASSERT_LOG(w,msg)	
 #define BHD_ASSERT_LOG_R(w,msg,r) 

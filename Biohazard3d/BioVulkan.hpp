@@ -9,12 +9,11 @@
 #include <string>
 #include <algorithm>
 
-//#define GLFW_INCLUDE_VULKAN
-//#include "vulkan\vulkan.h"
-#include <GLFW/glfw3.h>
+#include "vulkan/vulkan.h"
 
 #include "VulkanTools.hpp"
 #include "VulkanInstance.hpp"
+#include "VulkanSurface.hpp"
 #include "VulkanDevice.hpp"
 
 namespace bhd
@@ -32,17 +31,15 @@ namespace bhd
 
 		void release();
 
-		VkResult init(const std::vector<std::string> & extensions, const std::vector<std::string> & layers = {});
-
 		//Call init function with extensions and layers required by GLFW
-
+		VkResult init(const std::vector<std::string> & extensions, const std::vector<std::string> & layers = {});
 
 	public:
 		//GLFW functions
 		//------------------------------------------------------------------------
 		
 		//Call init function with extensions and layers required by GLFW
-		VkResult initWithGlfw();		
+		VkResult initWithGlfw(GLFWwindow * window);
 		std::vector<std::string> getGlfwRequiredInstanceExtensions();
 
 
@@ -58,9 +55,15 @@ namespace bhd
 #ifdef _DEBUG
 		DebugVulkanLayer debugVulkanLayer;
 #endif
+		//Surface
+		VulkanSurface surface;
 
-		//Devices
-		VulkanDevices devices;
+		//Device
+		VulkanDevices device;
+
+#ifdef _glfw3_h_
+		GLFWwindow *glfwWindow = nullptr;
+#endif
 
 	}; //class BioVulkan
 

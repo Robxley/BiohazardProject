@@ -7,7 +7,7 @@
 
 namespace bhd
 {
-	class VulkanInstance : public VulkanObject<VkInstance>
+	class VulkanInstance
 	{
 	public:
 		//Extensions and layers to init with vulkan
@@ -16,6 +16,7 @@ namespace bhd
 
 	public:
 		VulkanInstance();
+		~VulkanInstance() { release(); };
 
 		//Get available instance extensions and layers.
 		static std::vector<std::string> getAvailableExtensions();
@@ -27,6 +28,8 @@ namespace bhd
 		//Check if all given extensions and layers are available
 		VkResult validation();
 
+		VkResult init();
+
 		void SetApplicationInfo(VkApplicationInfo info) {
 			appInfo = info;
 		}
@@ -34,6 +37,12 @@ namespace bhd
 			instanceCreateInfo = info;
 		}
 		
+		void release();
+
+		operator VkInstance() {
+			return instance;
+		}
+
 	private:
 
 		//Application Info struct
@@ -58,6 +67,7 @@ namespace bhd
 			nullptr												//ppEnabledExtensionNames
 		};
 
+		VkInstance instance = VK_NULL_HANDLE;
 	};
 
 }

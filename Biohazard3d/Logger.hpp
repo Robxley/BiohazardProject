@@ -21,10 +21,10 @@
 	#define BHD_USE_STDOUT_LOG
 #endif
 
-
+#include <iomanip>
 #include "Assertion.hpp"
 #include "Singleton.hpp"
-#include <iomanip>
+
 namespace bhd
 {
 	/*!
@@ -197,7 +197,7 @@ namespace bhd
 #define BHD_LOG_POP				{bhd::Logger::instance().popField();}
 #define BHD_LOG_RESET_PP		{bhd::Logger::instance().resetPushPop();}
 #define BHD_LOG_STEP_PP(n)		{bhd::Logger::instance().setStepField(n);}
-#define BHD_LOG(msg)			{bhd::Logger::instance().getLogger()<<msg<<"\n";}
+#define BHD_LOG(msg)			{bhd::Logger::instance().getLogger()<<msg<<"\t\n";}
 #define BHD_LOG_ERROR(msg)		BHD_LOG("<ERROR> --"<<msg<<" -- FUNC <"<<__FUNCTION__<<"> -- FILE <"<<__FILE__<<"> -- LINE <"<<__LINE__<<">")
 #define BHD_LOG_WARNING(msg)	BHD_LOG("<WARNING> --"<<msg<<" -- FUNC <"<<__FUNCTION__<<"> -- FILE <"<<__FILE__<<"> -- LINE <"<<__LINE__<<">")
 #define BHD_LOG_LIST(title,list){BHD_LOG(title); BHD_LOG_PUSH; for(const auto & one:list){BHD_LOG(one)}; BHD_LOG_POP;}	

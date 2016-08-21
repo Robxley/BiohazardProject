@@ -8,16 +8,9 @@
 
 using namespace bhd;
 
-class LOGGER_INITER
-{
-	public:
-	LOGGER_INITER(){ BHD_LOG_INSTANCE(nullptr); }
-};
-
-static LOGGER_INITER loginiter;
-
 int main() 
 {
+	BHD_LOG_INSTANCE(nullptr);
 	try {
 		VulkanInstance::info();
 		BioApp app;

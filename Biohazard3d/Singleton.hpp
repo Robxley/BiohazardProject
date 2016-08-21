@@ -1,6 +1,3 @@
-
-
-
 #ifndef _BHD_SINGLETON_H
 #define _BHD_SINGLETON_H
 #pragma once

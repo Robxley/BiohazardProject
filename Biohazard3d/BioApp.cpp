@@ -39,5 +39,5 @@ void BioApp::mainLoop()
 
 void BioApp::initVulKan()
 {
-	vulkan.initWithGlfw();
+	vulkan.initWithGlfw(window.GetWindow());
 }

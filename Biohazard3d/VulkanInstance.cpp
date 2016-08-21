@@ -5,25 +5,34 @@ using namespace bhd;
 
 VulkanInstance::VulkanInstance()
 {
-	create = [&](VkInstance & instance) {
-
-		auto result = validation();
-		if (result != VK_SUCCESS) return result;
-
-		VulkanPPMaker ppExtensions{ extensions };
-		VulkanPPMaker ppLayer{ layers };
-
-		instanceCreateInfo.enabledLayerCount = ppLayer.count();
-		instanceCreateInfo.ppEnabledLayerNames = ppLayer;
-		instanceCreateInfo.enabledExtensionCount = ppExtensions.count();
-		instanceCreateInfo.ppEnabledExtensionNames = ppExtensions;
-
-		return vkCreateInstance(&instanceCreateInfo, nullptr, &instance);
-	};
-	destroy = [&](VkInstance instance) { vkDestroyInstance(instance, nullptr); };
 };
 
+VkResult VulkanInstance::init()
+{
+	release();
 
+	auto result = validation();
+	if (result != VK_SUCCESS) return result;
+
+	VulkanPPMaker ppExtensions{ extensions };
+	VulkanPPMaker ppLayer{ layers };
+
+	instanceCreateInfo.enabledLayerCount = ppLayer.count();
+	instanceCreateInfo.ppEnabledLayerNames = ppLayer;
+	instanceCreateInfo.enabledExtensionCount = ppExtensions.count();
+	instanceCreateInfo.ppEnabledExtensionNames = ppExtensions;
+
+	return vkCreateInstance(&instanceCreateInfo, nullptr, &instance);
+
+}
+void VulkanInstance::release()
+{
+	if(instance != VK_NULL_HANDLE)
+	{
+		vkDestroyInstance(instance, nullptr);
+	}
+	instance = VK_NULL_HANDLE;
+}
 VkResult VulkanInstance::validation()
 {
 	VkResult avaiblable = VK_SUCCESS;

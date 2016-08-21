@@ -31,14 +31,23 @@ VkResult BioVulkan::init(const std::vector<std::string> & extensions, const std:
 	resultTest("Debug Vulkan Layer");
 #endif
 
-	//Vulkan physical device
+	//Vulkan surface
+#ifdef _glfw3_h_
+	result = surface.initGlfw(instance, glfwWindow);
+	resultTest("GLFW Surface linked to vulkan");
+#endif 
 
-	const std::vector<std::string> & names = (const std::vector<std::string> &)devices.getPhysicalDeviceStuffs(instance);
+
+	//Vulkan physical device
+	const std::vector<std::string> & names = device.getPhysicalDeviceStuffs(instance);
 	BHD_LOG_LIST("Available Physical Devices :", names);
-	auto pickedPhysicalDevices = devices.getBestPhysicalDevice();
+	auto pickedPhysicalDevices = device.getBestPhysicalDevice(instance, surface);
+
+	pickedPhysicalDevices.extensionNames->info("Extension names:");
+
 	BHD_LOG("Picked Physical Devices: "<<*pickedPhysicalDevices.name);
 
-	result = devices.createLogicalDevice(pickedPhysicalDevices);
+	result = device.createLogicalDevice(pickedPhysicalDevices, surface);
 	resultTest("Vulkan Create logical device");
 
 	return VK_SUCCESS;
@@ -46,7 +55,8 @@ VkResult BioVulkan::init(const std::vector<std::string> & extensions, const std:
 
 void BioVulkan::release()
 {
-	devices.release();
+	device.release();
+	surface.release();
 #ifdef _DEBUG
 	debugVulkanLayer.release();
 #endif
@@ -58,8 +68,9 @@ void BioVulkan::release()
 //------------------------------------------------------------------------
 #ifdef _glfw3_h_
 
-VkResult BioVulkan::initWithGlfw()
+VkResult BioVulkan::initWithGlfw(GLFWwindow * window)
 {
+	this->glfwWindow = window;
 #ifdef _DEBUG
 	return init(getGlfwRequiredInstanceExtensions(), { "VK_LAYER_LUNARG_standard_validation" });
 #else
