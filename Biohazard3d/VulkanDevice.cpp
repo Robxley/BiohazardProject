@@ -119,6 +119,8 @@ PhysicalDeviceStuffs VulkanDevices::pickByScore(std::function<int(const Physical
 
 int VulkanDevices::scoreMaker(const PhysicalDeviceStuffs & physicalDeviceStuffs, VkSurfaceKHR surface, std::vector<std::string> extensionNames)
 {
+	BHD_LOG("Score maker >> " << *physicalDeviceStuffs.name);
+	BHD_LOG_PUSH;
 	int score = 0;
 	if (physicalDeviceStuffs.properties != nullptr)
 	{
@@ -180,15 +182,21 @@ int VulkanDevices::scoreMaker(const PhysicalDeviceStuffs & physicalDeviceStuffs,
 		BHD_LOG_WARNING("Surface is set to VK_NULL_HANDLE! - Score was evaluated without the surface")
 	}
 
-	BHD_LOG(*physicalDeviceStuffs.name << " Score:" << score);
+	BHD_LOG(">> Score:" << score);
 	if (score == -1)
 		BHD_LOG("VK_QUEUE_GRAPHICS_BIT with this surface/device is not supported");
 	
+	BHD_LOG_POP;
 	return score;
 }
 
 VkResult VulkanDevices::createLogicalDevice(const PhysicalDeviceStuffs & physicalDeviceStuffs, VkSurfaceKHR surface, VkQueueFlags flag, std::vector<std::string> extensions, std::vector<std::string> layers)
 {
+	BHD_ASSERT(physicalDeviceStuffs.physicalDevice != nullptr);
+
+	BHD_LOG_NEW_SECTION;
+	BHD_LOG("Try to create a logical device...");
+	BHD_LOG_PUSH;
 	//Defaut queue info
 	float queuePriority = 1.0f;
 	VkDeviceQueueCreateInfo queueCreateInfo = {
@@ -242,7 +250,6 @@ VkResult VulkanDevices::createLogicalDevice(const PhysicalDeviceStuffs & physica
 		}
 		
 		//Find a queue family supporting the surface
-		
 		if (!surfaceSupport)
 		{
 			uint32_t queueFamilyIndex = 0;
@@ -275,6 +282,45 @@ VkResult VulkanDevices::createLogicalDevice(const PhysicalDeviceStuffs & physica
 
 	}
 
+	if (!extensions.empty())
+	{
+		BHD_LOG("Check the extension support for this device...");
+		BHD_LOG_PUSH;
+		ExtensionNames extensionNames;
+		if(physicalDeviceStuffs.extensionNames != nullptr)
+		{
+			if (!physicalDeviceStuffs.extensionNames->empty())
+				extensionNames = *physicalDeviceStuffs.extensionNames;
+		}
+		else if (physicalDeviceStuffs.extensionProperties != nullptr)
+		{
+			for (const auto & one : *physicalDeviceStuffs.extensionProperties)
+				extensionNames.push_back(one.extensionName);
+		}
+		else
+		{
+			auto physicalDeviceExtensionProperties = inquirePhysicalDeviceExtensionProperties({ *physicalDeviceStuffs.physicalDevice });
+			if (!physicalDeviceExtensionProperties.empty())
+			{
+				auto extensionProperties = physicalDeviceExtensionProperties[0];
+				extensionNames.reserve(extensionProperties.size());
+				for (const auto & one : extensionProperties)
+					extensionNames.push_back(one.extensionName);
+			}
+		}
+		
+		if (!extensionNames.empty() && checkAvailability(extensions, extensionNames))
+		{
+			BHD_LOG("All extensions are supported by this device - you are lucky...");
+		}
+		else
+		{
+			BHD_LOG_ERROR("Some/all extensions are not supported! - that is so sad...");
+		}
+		BHD_LOG_POP;
+	}
+
+
 	//VkPhysicalDeviceFeatures deviceFeatures;
 
 	VkDeviceCreateInfo deviceCreationInfo;
@@ -295,7 +341,7 @@ VkResult VulkanDevices::createLogicalDevice(const PhysicalDeviceStuffs & physica
 	
 	VkResult result = vkCreateDevice(*physicalDeviceStuffs.physicalDevice, &deviceCreationInfo, nullptr, &device);
 	if (result != VK_SUCCESS) {
-		BHD_LOG_ERROR("Can't create the logical device");
+		BHD_LOG_ERROR("Can't create the logical device - VK ERROR: "<< vkresultToString(result));
 	}
 	else
 	{

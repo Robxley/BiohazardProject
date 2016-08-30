@@ -202,6 +202,10 @@ namespace bhd
 #define BHD_LOG_WARNING(msg)	BHD_LOG("<WARNING> --"<<msg<<" -- FUNC <"<<__FUNCTION__<<"> -- FILE <"<<__FILE__<<"> -- LINE <"<<__LINE__<<">")
 #define BHD_LOG_LIST(title,list){BHD_LOG(title); BHD_LOG_PUSH; for(const auto & one:list){BHD_LOG(one)}; BHD_LOG_POP;}	
 #define BHD_LOG_FIELD			 Logger::instance().Field()
+#define BHD_NEW_LINE			BHD_LOG("\t\n")
+#define BHD_LOG_NEW_SECTION		BHD_NEW_LINE//{auto & i=bhd::Logger::instance(); i.resetPushPop(); i.getLogger()<<"\t\n";}
+
+
 #endif	//BHD_VERBOSE
 
 #ifndef BHD_LOG_INSTANCE

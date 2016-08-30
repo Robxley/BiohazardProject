@@ -6,6 +6,7 @@ using namespace bhd;
 
 VkResult BioVulkan::init(const std::vector<std::string> & extensions, const std::vector<std::string> & layers)
 {
+	BHD_LOG_NEW_SECTION
 	BHD_LOG("Vulkan initialisaion:");
 	BHD_LOG_PUSH;
 	VkResult result;
@@ -43,11 +44,10 @@ VkResult BioVulkan::init(const std::vector<std::string> & extensions, const std:
 	BHD_LOG_LIST("Available Physical Devices :", names);
 	auto pickedPhysicalDevices = device.getBestPhysicalDevice(instance, surface);
 
-	pickedPhysicalDevices.extensionNames->info("Extension names:");
-
 	BHD_LOG("Picked Physical Devices: "<<*pickedPhysicalDevices.name);
+	pickedPhysicalDevices.extensionNames->info("Supported Extensions:");
 
-	result = device.createLogicalDevice(pickedPhysicalDevices, surface);
+	result = device.createLogicalDevice(pickedPhysicalDevices, surface, VK_QUEUE_GRAPHICS_BIT);
 	resultTest("Vulkan Create logical device");
 
 	return VK_SUCCESS;
@@ -81,6 +81,7 @@ VkResult BioVulkan::initWithGlfw(GLFWwindow * window)
 
  std::vector<std::string> BioVulkan::getGlfwRequiredInstanceExtensions()
 {
+	BHD_LOG_NEW_SECTION
 	uint32_t n = 0;
 	std::vector<std::string> exts;
 	if (glfwVulkanSupported() != GLFW_TRUE)

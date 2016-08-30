@@ -4,6 +4,7 @@
 
 #include <map>
 #include "VulkanTools.hpp"
+#include "VulkanSwapChain.h"
 
 namespace bhd
 {
@@ -38,6 +39,8 @@ namespace bhd
 		}
 
 	} PhysicalDeviceStuffs;
+
+
 
 	class PhysicalDeviceStuffList
 	{
@@ -82,6 +85,7 @@ namespace bhd
 		PhysicalDeviceStuffList & operator <<(const std::vector<QueueFamilyProperties> & queueFamilyProperties) { physicalDeviceQueueFamilyProperties = queueFamilyProperties; return *this; };
 		PhysicalDeviceStuffList & operator <<(const std::vector<ExtensionProperties> & extensionProperties) { physicalDeviceExtensionProperties = extensionProperties; return *this; };
 		PhysicalDeviceStuffList & operator <<(const std::vector<ExtensionNames> & extensions) { physicalDeviceExtensionNames = extensions; return *this; };
+		PhysicalDeviceStuffList & operator <<(const std::vector<SwapChainFeatures> & swapChainFeatures) { physicalDeviceSwapChainFeatures = swapChainFeatures; return *this; };
 
 
 		operator const std::vector<std::string>&() const { return physicalDeviceNames; }
@@ -91,6 +95,7 @@ namespace bhd
 		operator const std::vector<QueueFamilyProperties>&() const { return physicalDeviceQueueFamilyProperties; }
 		operator const std::vector<ExtensionProperties>&() const { return physicalDeviceExtensionProperties; }
 		operator const std::vector<ExtensionNames>&() const { return physicalDeviceExtensionNames; }
+		operator const std::vector<SwapChainFeatures>&() const { return physicalDeviceSwapChainFeatures; }
 
 		PhysicalDeviceStuffs operator [] (unsigned int i) const { return getPhysicalDeviceStuffs(i); }
 
@@ -103,6 +108,7 @@ namespace bhd
 		std::vector<QueueFamilyProperties> physicalDeviceQueueFamilyProperties;
 		std::vector<ExtensionProperties> physicalDeviceExtensionProperties;
 		std::vector<ExtensionNames> physicalDeviceExtensionNames;
+		std::vector<SwapChainFeatures> physicalDeviceSwapChainFeatures;
 
 		//Not implemented yet
 		//std::vector<VkPhysicalDeviceLimits> physicalDeviceLimits;
@@ -168,7 +174,7 @@ namespace bhd
 		}
 
 	public:
-		//Functions with a trace of physical device features
+		//Functions keeping a trace of physical device stuffs in the member variable -> physicalDeviceStuffs 
 		//--------------------------------------------------
 
 		//call inquireAvailablePhysicalDevices and update the private variable physicalDeviceStuffs (see PhysicalDeviceStuffList)
@@ -249,7 +255,7 @@ namespace bhd
 			return pickByScore(surface,extensionNames);
 		}
 
-		VkResult createLogicalDevice(const PhysicalDeviceStuffs & physicalDeviceStuffs, VkSurfaceKHR surface = VK_NULL_HANDLE, VkQueueFlags flag = VK_QUEUE_GRAPHICS_BIT,  std::vector<std::string> extensions = std::vector<std::string>(), std::vector<std::string> layers = std::vector<std::string>());
+		VkResult createLogicalDevice(const PhysicalDeviceStuffs & physicalDeviceStuffs, VkSurfaceKHR surface = VK_NULL_HANDLE, VkQueueFlags flag = VK_QUEUE_GRAPHICS_BIT,  std::vector<std::string> extensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME }, std::vector<std::string> layers = std::vector<std::string>());
 
 		int getQueueFamilyIndex(const QueueFamilyProperties & queueFamilyProperties, VkQueueFlags flag = VK_QUEUE_GRAPHICS_BIT) const;
 		int getQueueFamilyIndex(const PhysicalDeviceStuffs & physicalDeviceStuffs, VkQueueFlags flag = VK_QUEUE_GRAPHICS_BIT) const {

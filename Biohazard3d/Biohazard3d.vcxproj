@@ -17,6 +17,7 @@
     <ClCompile Include="VulkanDevice.cpp" />
     <ClCompile Include="VulkanInstance.cpp" />
     <ClCompile Include="VulkanSurface.cpp" />
+    <ClCompile Include="VulkanSwapChain.cpp" />
     <ClCompile Include="VulkanTools.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -29,6 +30,7 @@
     <ClInclude Include="VulkanDevice.hpp" />
     <ClInclude Include="VulkanInstance.hpp" />
     <ClInclude Include="VulkanSurface.hpp" />
+    <ClInclude Include="VulkanSwapChain.h" />
     <ClInclude Include="VulkanTools.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
