@@ -94,30 +94,3 @@ VkExtent2D	SwapChainFeatures::pickExtent2D(VkExtent2D extent2D) {
 	};
 }
 
-
-bool VulkanSwapChain::init(VkPhysicalDevice device, VkSurfaceKHR surface)
-{
-	BHD_ASSERT(device == VK_NULL_HANDLE);
-	
-	//Inquire the Surface capabilities
-	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &swapChainFeatures.surfaceCapabilities);
-
-	//Inquire the surface formats
-	uint32_t formatCount;
-	vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr);
-	if (formatCount != 0) 
-	{
-		swapChainFeatures.surfaceFormats.resize(formatCount);
-		vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, swapChainFeatures.surfaceFormats.data());
-	}
-
-	//Inquire the surface present modes
-	uint32_t presentModeCount;
-	vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, nullptr);
-	if (presentModeCount != 0) {
-		swapChainFeatures.presentModes.resize(presentModeCount);
-		vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, swapChainFeatures.presentModes.data());
-	}
-
-	return swapChainFeatures.IsValid();
-}

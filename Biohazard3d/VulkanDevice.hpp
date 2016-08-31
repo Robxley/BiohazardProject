@@ -155,6 +155,8 @@ namespace bhd
 		//Inquire physical device surface support
 		static VkBool32 inquirePhysicalDeviceSurfaceSupport(VkPhysicalDevice physicalDevice, uint32_t queueIndex, VkSurfaceKHR surface);
 
+		//Inquire physical device swap chain support features
+		static std::vector<SwapChainFeatures> inquirePhysicalDeviceSwapChainFeatures(const std::vector<VkPhysicalDevice> & devices, VkSurfaceKHR surface);
 
 	public:
 		//surcharge for useful inquire (not optimal)
@@ -213,8 +215,13 @@ namespace bhd
 			return physicalDeviceStuffs << inquirePhysicalDeviceExtensionNames(physicalDeviceStuffs);
 		}
 
+		//call inquirePhysicalDeviceSwapChainFeatures and update the private variable physicalDeviceStuffs (see PhysicalDeviceStuffList)
+		const std::vector<ExtensionNames> & getPhysicalDeviceSwapChainFeatures(VkSurfaceKHR surface) {
+			return physicalDeviceStuffs << inquirePhysicalDeviceSwapChainFeatures(physicalDeviceStuffs, surface);
+		}
+
 		//call all get* functions and update the private variable physicalDeviceStuffs (see PhysicalDeviceStuffList)
-		const PhysicalDeviceStuffList & getPhysicalDeviceStuffs(VkInstance instance)
+		const PhysicalDeviceStuffList & getPhysicalDeviceStuffs(VkInstance instance, VkSurfaceKHR surface = VK_NULL_HANDLE)
 		{
 			getAvailablePhysicalDevices(instance);
 			getPhysicalDeviceProperties();
@@ -223,6 +230,8 @@ namespace bhd
 			getPhysicalDeviceQueueFamilyProperties();
 			getPhysicalDeviceExtensionProperties();
 			getPhysicalDeviceExtensionNames();
+			if(surface != VK_NULL_HANDLE)
+				getPhysicalDeviceSwapChainFeatures(surface);
 			return physicalDeviceStuffs;
 		}
 

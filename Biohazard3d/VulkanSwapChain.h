@@ -54,17 +54,5 @@ namespace bhd
 
 	}SwapChainFeatures;
 
-
-	class VulkanSwapChain
-	{
-	public:
-		VulkanSwapChain::VulkanSwapChain() {}
-		VulkanSwapChain(VkPhysicalDevice device, VkSurfaceKHR surface) { init(device, surface); }
-		~VulkanSwapChain() {}
-
-		bool init(VkPhysicalDevice device, VkSurfaceKHR surface);
-
-		SwapChainFeatures swapChainFeatures;
-	};
 }
 #endif //_BHD_VULKANSWAPCHAIN_H

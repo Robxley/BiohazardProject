@@ -40,7 +40,7 @@ VkResult BioVulkan::init(const std::vector<std::string> & extensions, const std:
 
 
 	//Vulkan physical device
-	const std::vector<std::string> & names = device.getPhysicalDeviceStuffs(instance);
+	const std::vector<std::string> & names = device.getPhysicalDeviceStuffs(instance, surface);
 	BHD_LOG_LIST("Available Physical Devices :", names);
 	auto pickedPhysicalDevices = device.getBestPhysicalDevice(instance, surface);
 

@@ -92,6 +92,45 @@ std::vector<ExtensionNames> VulkanDevices::inquirePhysicalDeviceExtensionNames(c
 	return deviceExtensionNames;
 }
 
+std::vector<SwapChainFeatures> VulkanDevices::inquirePhysicalDeviceSwapChainFeatures(const std::vector<VkPhysicalDevice> & devices, VkSurfaceKHR surface)
+{
+	BHD_ASSERT(!devices.empty());
+	BHD_ASSERT(surface != VK_NULL_HANDLE);
+
+	std::vector<SwapChainFeatures> swapChainFeatures(devices.size());
+
+	//for each device
+	std::size_t i = 0;
+	for (const auto & device : devices)
+	{
+		//Inquire the Surface capabilities
+		auto & scf = swapChainFeatures[i++];
+		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &scf.surfaceCapabilities);
+
+		//Inquire the surface formats
+		uint32_t formatCount;
+		vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr);
+		if (formatCount != 0)
+		{
+			scf.surfaceFormats.resize(formatCount);
+			vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, scf.surfaceFormats.data());
+		}
+
+		//Inquire the surface present modes
+		uint32_t presentModeCount;
+		vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, nullptr);
+		if (presentModeCount != 0) {
+			scf.presentModes.resize(presentModeCount);
+			vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, scf.presentModes.data());
+		}
+
+	}
+
+	return std::move(swapChainFeatures);
+
+}
+
+
 VkBool32 VulkanDevices::inquirePhysicalDeviceSurfaceSupport(VkPhysicalDevice physicalDevice, uint32_t queueIndex, VkSurfaceKHR surface)
 {
 	BHD_ASSERT(queueIndex >= 0);
