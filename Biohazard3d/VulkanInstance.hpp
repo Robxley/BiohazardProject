@@ -28,6 +28,7 @@ namespace bhd
 		//Check if all given extensions and layers are available
 		VkResult validation();
 
+		//Create a vulkan context ready to draw (extensions, layers, surface, swapchain ...)
 		VkResult init();
 
 		void SetApplicationInfo(VkApplicationInfo info) {

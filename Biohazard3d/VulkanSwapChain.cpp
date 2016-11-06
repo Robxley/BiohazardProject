@@ -5,14 +5,39 @@
 using namespace bhd;
 
 
+VkResult VulkanSwapChain::create(const VkDevice & _device, const VkSwapchainCreateInfoKHR & swapChainInfo) {
+	device = _device;
+	VkResult result = vkCreateSwapchainKHR(device, &swapChainInfo, nullptr, &swapChain);
+	if (result != VK_SUCCESS) return result;
+	uint32_t imageCount = 0;
+	vkGetSwapchainImagesKHR(device, swapChain, &imageCount, nullptr);
+	swapChainImages.resize(imageCount);
+	vkGetSwapchainImagesKHR(device, swapChain, &imageCount, swapChainImages.data());
+
+}
+
+void VulkanSwapChain::release() {
+	if (swapChain != VK_NULL_HANDLE)
+	{
+		vkDestroySwapchainKHR(device, swapChain, nullptr);
+		swapChain = VK_NULL_HANDLE;
+	}
+}
+
+
+
+
+
 VkSwapchainCreateInfoKHR SwapChainFeatures::pickSwapChain(
 	VkSurfaceKHR surface,
 	VkExtent2D extent2D,
 	VkSurfaceFormatKHR surfaceFormat,
 	VkPresentModeKHR presentMode,
 	const std::vector<uint32_t> & queueFamilyIndices
-)
+) const
 {
+
+	BHD_ASSERT_LOG(IsValid(), "Swap Chain Features aren't Valids");
 
 	surfaceFormat = pickSurfaceFormat(surfaceFormat);
 	presentMode = pickPresentMode(presentMode);
@@ -57,7 +82,7 @@ VkSwapchainCreateInfoKHR SwapChainFeatures::pickSwapChain(
 
 
 
-bool SwapChainFeatures::IsAvailable(VkSurfaceFormatKHR surfaceFormat)
+bool SwapChainFeatures::IsAvailable(VkSurfaceFormatKHR surfaceFormat) const
 {
 	BHD_ASSERT(IsValid());
 	if (surfaceFormats.size() == 1 && surfaceFormats[0].format == VK_FORMAT_UNDEFINED) {
@@ -72,7 +97,7 @@ bool SwapChainFeatures::IsAvailable(VkSurfaceFormatKHR surfaceFormat)
 }
 
 
-bool SwapChainFeatures::IsAvailable(VkPresentModeKHR surfaceFormat)
+bool SwapChainFeatures::IsAvailable(VkPresentModeKHR surfaceFormat) const
 {
 	BHD_ASSERT(IsValid());
 	for (const auto& one : presentModes) {
@@ -87,7 +112,7 @@ bool SwapChainFeatures::IsAvailable(VkPresentModeKHR surfaceFormat)
 #undef max
 #undef min 
 #endif
-VkExtent2D	SwapChainFeatures::pickExtent2D(VkExtent2D extent2D) {
+VkExtent2D	SwapChainFeatures::pickExtent2D(VkExtent2D extent2D) const {
 	return{
 		std::max(std::min(extent2D.width,	surfaceCapabilities.maxImageExtent.width),	surfaceCapabilities.minImageExtent.width),
 		std::max(std::min(extent2D.height,	surfaceCapabilities.maxImageExtent.height),	surfaceCapabilities.minImageExtent.height)

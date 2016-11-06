@@ -3,7 +3,7 @@
 using namespace bhd;
 
 
-std::vector<VkPhysicalDevice> VulkanDevices::inquireAvailablePhysicalDevices(VkInstance instance)
+std::vector<VkPhysicalDevice> VulkanDevice::inquireAvailablePhysicalDevices(VkInstance instance)
 {
 	BHD_ASSERT(instance != VK_NULL_HANDLE);
 	uint32_t count = 0;
@@ -13,7 +13,7 @@ std::vector<VkPhysicalDevice> VulkanDevices::inquireAvailablePhysicalDevices(VkI
 	return std::move(physicalDevices);
 }
 
-std::vector<VkPhysicalDeviceProperties> VulkanDevices::inquirePhysicalDeviceProperties(const std::vector<VkPhysicalDevice> & devices)
+std::vector<VkPhysicalDeviceProperties> VulkanDevice::inquirePhysicalDeviceProperties(const std::vector<VkPhysicalDevice> & devices)
 {
 	BHD_ASSERT(!devices.empty());
 	std::vector<VkPhysicalDeviceProperties> properties(devices.size());
@@ -22,7 +22,7 @@ std::vector<VkPhysicalDeviceProperties> VulkanDevices::inquirePhysicalDeviceProp
 	return std::move(properties);
 }
 
-std::vector<std::string> VulkanDevices::inquirePhysicalDeviceNames(const std::vector<VkPhysicalDeviceProperties> & properties)
+std::vector<std::string> VulkanDevice::inquirePhysicalDeviceNames(const std::vector<VkPhysicalDeviceProperties> & properties)
 {
 	BHD_ASSERT(!properties.empty());
 	std::vector<std::string> names;
@@ -33,7 +33,7 @@ std::vector<std::string> VulkanDevices::inquirePhysicalDeviceNames(const std::ve
 }
 
 //Return a vector of all features for each physical devices
-std::vector<VkPhysicalDeviceFeatures> VulkanDevices::inquirePhysicalDeviceFeatures(const std::vector<VkPhysicalDevice> & devices)
+std::vector<VkPhysicalDeviceFeatures> VulkanDevice::inquirePhysicalDeviceFeatures(const std::vector<VkPhysicalDevice> & devices)
 {
 	BHD_ASSERT(!devices.empty());
 	std::vector<VkPhysicalDeviceFeatures> features(devices.size());
@@ -42,7 +42,7 @@ std::vector<VkPhysicalDeviceFeatures> VulkanDevices::inquirePhysicalDeviceFeatur
 	return std::move(features);
 }
 
-std::vector<QueueFamilyProperties> VulkanDevices::inquirePhysicalDeviceQueueFamilyProperties(const std::vector<VkPhysicalDevice> & devices)
+std::vector<QueueFamilyProperties> VulkanDevice::inquirePhysicalDeviceQueueFamilyProperties(const std::vector<VkPhysicalDevice> & devices)
 {
 	BHD_ASSERT(!devices.empty());
 	std::vector<QueueFamilyProperties> queues(devices.size());
@@ -59,7 +59,7 @@ std::vector<QueueFamilyProperties> VulkanDevices::inquirePhysicalDeviceQueueFami
 }
 
 //Inquire physical Device extension names
-std::vector<ExtensionProperties> VulkanDevices::inquirePhysicalDeviceExtensionProperties(const std::vector<VkPhysicalDevice> & devices)
+std::vector<ExtensionProperties> VulkanDevice::inquirePhysicalDeviceExtensionProperties(const std::vector<VkPhysicalDevice> & devices)
 {
 	BHD_ASSERT(!devices.empty());
 	std::vector<ExtensionProperties> deviceExtensionProperties(devices.size());
@@ -75,7 +75,7 @@ std::vector<ExtensionProperties> VulkanDevices::inquirePhysicalDeviceExtensionPr
 	return std::move(deviceExtensionProperties);
 }
 
-std::vector<ExtensionNames> VulkanDevices::inquirePhysicalDeviceExtensionNames(const std::vector<ExtensionProperties> & extensionProperties)
+std::vector<ExtensionNames> VulkanDevice::inquirePhysicalDeviceExtensionNames(const std::vector<ExtensionProperties> & extensionProperties)
 {
 	BHD_ASSERT(!extensionProperties.empty());
 	std::vector<ExtensionNames> deviceExtensionNames; 
@@ -92,7 +92,7 @@ std::vector<ExtensionNames> VulkanDevices::inquirePhysicalDeviceExtensionNames(c
 	return deviceExtensionNames;
 }
 
-std::vector<SwapChainFeatures> VulkanDevices::inquirePhysicalDeviceSwapChainFeatures(const std::vector<VkPhysicalDevice> & devices, VkSurfaceKHR surface)
+std::vector<SwapChainFeatures> VulkanDevice::inquirePhysicalDeviceSwapChainFeatures(const std::vector<VkPhysicalDevice> & devices, VkSurfaceKHR surface)
 {
 	BHD_ASSERT(!devices.empty());
 	BHD_ASSERT(surface != VK_NULL_HANDLE);
@@ -131,7 +131,7 @@ std::vector<SwapChainFeatures> VulkanDevices::inquirePhysicalDeviceSwapChainFeat
 }
 
 
-VkBool32 VulkanDevices::inquirePhysicalDeviceSurfaceSupport(VkPhysicalDevice physicalDevice, uint32_t queueIndex, VkSurfaceKHR surface)
+VkBool32 VulkanDevice::inquirePhysicalDeviceSurfaceSupport(VkPhysicalDevice physicalDevice, uint32_t queueIndex, VkSurfaceKHR surface)
 {
 	BHD_ASSERT(queueIndex >= 0);
 	BHD_ASSERT(surface != VK_NULL_HANDLE);
@@ -140,13 +140,13 @@ VkBool32 VulkanDevices::inquirePhysicalDeviceSurfaceSupport(VkPhysicalDevice phy
 	return support;
 }
 
-PhysicalDeviceStuffs VulkanDevices::pickByScore(std::function<int(const PhysicalDeviceStuffs &, VkSurfaceKHR, std::vector<std::string>)> scoreMaker, VkSurfaceKHR surface, std::vector<std::string> extensionNames, int * score) const
+PhysicalDeviceStuffs VulkanDevice::pickByScore(std::function<int(const PhysicalDeviceStuffs &, VkSurfaceKHR, std::vector<std::string>)> scoreMaker, VkSurfaceKHR surface, std::vector<std::string> extensionNames, int * score) const
 {
 	std::map<int, PhysicalDeviceStuffs> physicalDeviceScores;
-	auto count = physicalDeviceStuffs.count();
+	auto count = physicalDeviceStuffList.count();
 	for (auto i = 0; i < count; i++)
 	{
-		PhysicalDeviceStuffs deviceStuff = physicalDeviceStuffs[i];
+		PhysicalDeviceStuffs deviceStuff = physicalDeviceStuffList[i];
 		int score = scoreMaker(deviceStuff, surface, extensionNames);
 		physicalDeviceScores.insert(std::pair<int, PhysicalDeviceStuffs>(score, deviceStuff));
 	}
@@ -156,7 +156,7 @@ PhysicalDeviceStuffs VulkanDevices::pickByScore(std::function<int(const Physical
 	return  bestPhysicalDevice->second;
 }
 
-int VulkanDevices::scoreMaker(const PhysicalDeviceStuffs & physicalDeviceStuffs, VkSurfaceKHR surface, std::vector<std::string> extensionNames)
+int VulkanDevice::scoreMaker(const PhysicalDeviceStuffs & physicalDeviceStuffs, VkSurfaceKHR surface, std::vector<std::string> extensionNames)
 {
 	BHD_LOG("Score maker >> " << *physicalDeviceStuffs.name);
 	BHD_LOG_PUSH;
@@ -174,7 +174,7 @@ int VulkanDevices::scoreMaker(const PhysicalDeviceStuffs & physicalDeviceStuffs,
 	}
 	else
 	{
-		BHD_LOG_WARNING("The score Maker need the physical device properties!")
+		BHD_LOG_WARNING("The score Maker need the physical device properties!");
 	}
 
 	if (physicalDeviceStuffs.queueFamilyProperties != nullptr)
@@ -200,7 +200,7 @@ int VulkanDevices::scoreMaker(const PhysicalDeviceStuffs & physicalDeviceStuffs,
 	}
 	else
 	{
-		BHD_LOG_WARNING("The score Maker need the queue family properties!")
+		BHD_LOG_WARNING("The score Maker need the queue family properties!");
 	}
 
 	if (!extensionNames.empty())
@@ -212,13 +212,13 @@ int VulkanDevices::scoreMaker(const PhysicalDeviceStuffs & physicalDeviceStuffs,
 		}
 		else
 		{
-			BHD_LOG_WARNING("The score Maker need the device extension names!")
+			BHD_LOG_WARNING("The score Maker need the device extension names!");
 		}
 	}
 
 	if (surface == VK_NULL_HANDLE)
 	{
-		BHD_LOG_WARNING("Surface is set to VK_NULL_HANDLE! - Score was evaluated without the surface")
+		BHD_LOG_WARNING("Surface is set to VK_NULL_HANDLE! - Score was evaluated without the surface");
 	}
 
 	BHD_LOG(">> Score:" << score);
@@ -229,7 +229,7 @@ int VulkanDevices::scoreMaker(const PhysicalDeviceStuffs & physicalDeviceStuffs,
 	return score;
 }
 
-VkResult VulkanDevices::createLogicalDevice(const PhysicalDeviceStuffs & physicalDeviceStuffs, VkSurfaceKHR surface, VkQueueFlags flag, std::vector<std::string> extensions, std::vector<std::string> layers)
+VkResult VulkanDevice::createLogicalDevice(const PhysicalDeviceStuffs & physicalDeviceStuffs, VkSurfaceKHR surface, VkQueueFlags flag, std::vector<std::string> extensions, std::vector<std::string> layers)
 {
 	BHD_ASSERT(physicalDeviceStuffs.physicalDevice != nullptr);
 
@@ -276,14 +276,14 @@ VkResult VulkanDevices::createLogicalDevice(const PhysicalDeviceStuffs & physica
 
 	if (surface != VK_NULL_HANDLE)
 	{
-		BHD_LOG("Check the surface support :")
+		BHD_LOG("Check the surface support :");
 		VkBool32 surfaceSupport = 0;
 		//Check if the surface is supported by a queue
 		for (auto queueInfo : queueCreateInfos)
 		{
 			if (surfaceSupport = inquirePhysicalDeviceSurfaceSupport(physicalDeviceStuffs, queueInfo.queueFamilyIndex, surface))
 			{
-				BHD_LOG("The surface is already supported by one queue!")
+				BHD_LOG("The surface is already supported by one queue!");
 				break;
 			}
 		}
@@ -292,7 +292,7 @@ VkResult VulkanDevices::createLogicalDevice(const PhysicalDeviceStuffs & physica
 		if (!surfaceSupport)
 		{
 			uint32_t queueFamilyIndex = 0;
-			BHD_LOG("Try to find a queue family supporting the surface...")
+			BHD_LOG("Try to find a queue family supporting the surface...");
 			if (physicalDeviceStuffs.queueFamilyProperties != nullptr)
 			{	
 				for (auto propertie : *physicalDeviceStuffs.queueFamilyProperties)
@@ -304,7 +304,7 @@ VkResult VulkanDevices::createLogicalDevice(const PhysicalDeviceStuffs & physica
 			}
 			else
 			{
-				BHD_LOG_ERROR("Queue family properties is needed for that!")
+				BHD_LOG_ERROR("Queue family properties is needed for that!");
 			}
 
 			if (surfaceSupport)
@@ -315,7 +315,7 @@ VkResult VulkanDevices::createLogicalDevice(const PhysicalDeviceStuffs & physica
 			}
 			else
 			{
-				BHD_LOG_ERROR("The surface support is not available")
+				BHD_LOG_ERROR("The surface support is not available");
 			}
 		}
 
@@ -380,7 +380,7 @@ VkResult VulkanDevices::createLogicalDevice(const PhysicalDeviceStuffs & physica
 	
 	VkResult result = vkCreateDevice(*physicalDeviceStuffs.physicalDevice, &deviceCreationInfo, nullptr, &device);
 	if (result != VK_SUCCESS) {
-		BHD_LOG_ERROR("Can't create the logical device - VK ERROR: "<< vkresultToString(result));
+		BHD_LOG_ERROR("Can't create the logical device - VK ERROR: "<< vkResultToString(result));
 	}
 	else
 	{
@@ -396,7 +396,7 @@ VkResult VulkanDevices::createLogicalDevice(const PhysicalDeviceStuffs & physica
 	return result;
 }
 
-int VulkanDevices::getQueueFamilyIndex(const QueueFamilyProperties & queueFamilyProperties, VkQueueFlags flag) const
+int VulkanDevice::getQueueFamilyIndex(const QueueFamilyProperties & queueFamilyProperties, VkQueueFlags flag) const
 {
 	uint32_t index = 0;
 	for (auto queueFamily : queueFamilyProperties)

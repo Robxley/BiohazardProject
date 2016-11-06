@@ -56,6 +56,10 @@ VkResult VulkanSurface::initGlfw(VkInstance instance, GLFWwindow * window)
 	if (result != VK_SUCCESS) {
 		BHD_LOG_ERROR("GLFW failed to create window surface!");
 	}
+	int w, h;
+	glfwGetFramebufferSize(window, &w, &h);
+	extent2D.width = w;
+	extent2D.height = h;
 	return result;
 }
 

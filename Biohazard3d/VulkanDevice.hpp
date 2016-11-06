@@ -18,6 +18,7 @@ namespace bhd
 		const QueueFamilyProperties *		queueFamilyProperties;
 		const ExtensionProperties *			extensionProperties;
 		const ExtensionNames *				extensionNames;
+		const SwapChainFeatures *			swapChainFeatures;
 
 		operator std::string() const { return (name != nullptr) ? *name : std::string(); }
 		operator VkPhysicalDevice () const { return (physicalDevice != nullptr) ? *physicalDevice : VK_NULL_HANDLE; }
@@ -26,6 +27,7 @@ namespace bhd
 		operator QueueFamilyProperties () const { return (queueFamilyProperties != nullptr) ? *queueFamilyProperties : QueueFamilyProperties(); }
 		operator ExtensionProperties () const { return (extensionProperties != nullptr) ? *extensionProperties : ExtensionProperties(); }
 		operator ExtensionNames () const { return (extensionNames != nullptr) ? *extensionNames : ExtensionNames(); }
+		operator SwapChainFeatures () const { return (swapChainFeatures != nullptr) ? *swapChainFeatures : SwapChainFeatures(); }
 
 		ExtensionNames getExtensionNames(){
 			if (extensionProperties == nullptr) return ExtensionNames();
@@ -57,7 +59,8 @@ namespace bhd
 				validVectorPtr(physicalDeviceFeatures,i),
 				validVectorPtr(physicalDeviceQueueFamilyProperties,i),
 				validVectorPtr(physicalDeviceExtensionProperties,i),
-				validVectorPtr(physicalDeviceExtensionNames,i)
+				validVectorPtr(physicalDeviceExtensionNames,i),
+				validVectorPtr(physicalDeviceSwapChainFeatures,i)
 				};
 		}
 
@@ -73,6 +76,9 @@ namespace bhd
 			physicalDeviceProperties.clear();
 			physicalDeviceFeatures.clear();
 			physicalDeviceQueueFamilyProperties.clear();
+			physicalDeviceExtensionProperties.clear();
+			physicalDeviceExtensionNames.clear();
+			physicalDeviceSwapChainFeatures.clear();
 		}
 
 	public:
@@ -122,12 +128,13 @@ namespace bhd
 	};
 
 
-	class VulkanDevices
+	class VulkanDevice
 	{
 	public:
-		VulkanDevices(){}
-		VulkanDevices(VkInstance instance) { getPhysicalDeviceStuffs(instance); };
-		~VulkanDevices() { release(); }
+		VulkanDevice(){}
+		VulkanDevice(VkInstance instance) { getPhysicalDeviceStuffs(instance); };
+		~VulkanDevice() { release(); }
+		
 		//Physical devices useful functions
 		//--------------------------------
 
@@ -159,7 +166,7 @@ namespace bhd
 		static std::vector<SwapChainFeatures> inquirePhysicalDeviceSwapChainFeatures(const std::vector<VkPhysicalDevice> & devices, VkSurfaceKHR surface);
 
 	public:
-		//surcharge for useful inquire (not optimal)
+		//surcharge for useful inquire functions
 		//-----------------------------------------------------------------------------
 		static std::vector<std::string> inquirePhysicalDeviceNames(VkInstance instance)
 		{
@@ -181,48 +188,49 @@ namespace bhd
 
 		//call inquireAvailablePhysicalDevices and update the private variable physicalDeviceStuffs (see PhysicalDeviceStuffList)
 		const std::vector<VkPhysicalDevice> & getAvailablePhysicalDevices(VkInstance instance){
-			physicalDeviceStuffs.release();
-			return physicalDeviceStuffs << inquireAvailablePhysicalDevices(instance);
+			physicalDeviceStuffList.release();
+			return physicalDeviceStuffList << inquireAvailablePhysicalDevices(instance);
 		}
 
 		//call inquirePhysicalDeviceProperties and update the private variable physicalDeviceStuffs (see PhysicalDeviceStuffList)
 		const std::vector<VkPhysicalDeviceProperties> & getPhysicalDeviceProperties(){
-			return physicalDeviceStuffs << inquirePhysicalDeviceProperties(physicalDeviceStuffs);
+			return physicalDeviceStuffList << inquirePhysicalDeviceProperties(physicalDeviceStuffList);
 		}
 
 		//call inquirePhysicalDeviceNames and update the private variable physicalDeviceStuffs (see PhysicalDeviceStuffList)
 		const std::vector<std::string> & getPhysicalDeviceNames() {
-			return physicalDeviceStuffs << inquirePhysicalDeviceNames(physicalDeviceStuffs);
+			return physicalDeviceStuffList << inquirePhysicalDeviceNames(physicalDeviceStuffList);
 		}
 
 		//call inquirePhysicalDeviceFeatures and update the private variable physicalDeviceStuffs (see PhysicalDeviceStuffList)
 		const std::vector<VkPhysicalDeviceFeatures> & getPhysicalDeviceFeatures() {
-			return physicalDeviceStuffs << inquirePhysicalDeviceFeatures(physicalDeviceStuffs);
+			return physicalDeviceStuffList << inquirePhysicalDeviceFeatures(physicalDeviceStuffList);
 		}
 
 		//call inquirePhysicalDeviceQueueFamilyProperties and update the private variable physicalDeviceStuffs (see PhysicalDeviceStuffList)
 		const std::vector<QueueFamilyProperties> & getPhysicalDeviceQueueFamilyProperties() {
-			return physicalDeviceStuffs << inquirePhysicalDeviceQueueFamilyProperties(physicalDeviceStuffs);
+			return physicalDeviceStuffList << inquirePhysicalDeviceQueueFamilyProperties(physicalDeviceStuffList);
 		}
 
 		//call inquirePhysicalDeviceExtensionProperties and update the private variable physicalDeviceStuffs (see PhysicalDeviceStuffList)
 		const std::vector<ExtensionProperties> & getPhysicalDeviceExtensionProperties() {
-			return physicalDeviceStuffs << inquirePhysicalDeviceExtensionProperties(physicalDeviceStuffs);
+			return physicalDeviceStuffList << inquirePhysicalDeviceExtensionProperties(physicalDeviceStuffList);
 		}
 
 		//call inquirePhysicalDeviceExtensionNames and update the private variable physicalDeviceStuffs (see PhysicalDeviceStuffList)
 		const std::vector<ExtensionNames> & getPhysicalDeviceExtensionNames() {
-			return physicalDeviceStuffs << inquirePhysicalDeviceExtensionNames(physicalDeviceStuffs);
+			return physicalDeviceStuffList << inquirePhysicalDeviceExtensionNames(physicalDeviceStuffList);
 		}
 
 		//call inquirePhysicalDeviceSwapChainFeatures and update the private variable physicalDeviceStuffs (see PhysicalDeviceStuffList)
-		const std::vector<ExtensionNames> & getPhysicalDeviceSwapChainFeatures(VkSurfaceKHR surface) {
-			return physicalDeviceStuffs << inquirePhysicalDeviceSwapChainFeatures(physicalDeviceStuffs, surface);
+		const std::vector<SwapChainFeatures> & getPhysicalDeviceSwapChainFeatures(VkSurfaceKHR surface) {
+			return physicalDeviceStuffList << inquirePhysicalDeviceSwapChainFeatures(physicalDeviceStuffList, surface);
 		}
 
 		//call all get* functions and update the private variable physicalDeviceStuffs (see PhysicalDeviceStuffList)
 		const PhysicalDeviceStuffList & getPhysicalDeviceStuffs(VkInstance instance, VkSurfaceKHR surface = VK_NULL_HANDLE)
 		{
+			release();
 			getAvailablePhysicalDevices(instance);
 			getPhysicalDeviceProperties();
 			getPhysicalDeviceFeatures();
@@ -232,14 +240,14 @@ namespace bhd
 			getPhysicalDeviceExtensionNames();
 			if(surface != VK_NULL_HANDLE)
 				getPhysicalDeviceSwapChainFeatures(surface);
-			return physicalDeviceStuffs;
+			return physicalDeviceStuffList;
 		}
 
 	public:
 		//Pick up functions to select a physical device
 		//---------------------------------------------
 
-		//give the better physical device based on the score function
+		//pick the best physical device based on the score function
 		PhysicalDeviceStuffs pickByScore(std::function<int(const PhysicalDeviceStuffs &, VkSurfaceKHR, std::vector<std::string> extensionNames)> scoreMaker, VkSurfaceKHR surface, std::vector<std::string> extensionNames, int * score = nullptr) const;
 
 		//default score function (only the properties and queue family properties are used)
@@ -251,20 +259,18 @@ namespace bhd
 
 		PhysicalDeviceStuffs getBestPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, std::vector<std::string> extensionNames = { VK_KHR_SWAPCHAIN_EXTENSION_NAME })
 		{
-			release();
-			getAvailablePhysicalDevices(instance);
-			getPhysicalDeviceProperties();
-			getPhysicalDeviceNames();
-			getPhysicalDeviceQueueFamilyProperties();
-			if (!extensionNames.empty())
-			{
-				getPhysicalDeviceExtensionProperties();
-				getPhysicalDeviceExtensionNames();
-			}
+			getPhysicalDeviceStuffs(instance, surface);
 			return pickByScore(surface,extensionNames);
 		}
 
+
 		VkResult createLogicalDevice(const PhysicalDeviceStuffs & physicalDeviceStuffs, VkSurfaceKHR surface = VK_NULL_HANDLE, VkQueueFlags flag = VK_QUEUE_GRAPHICS_BIT,  std::vector<std::string> extensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME }, std::vector<std::string> layers = std::vector<std::string>());
+
+		VkResult createBestLogicalDevice(VkInstance instance, VkSurfaceKHR surface, std::vector<std::string> extensionNames = { VK_KHR_SWAPCHAIN_EXTENSION_NAME }) {
+			auto bestDevice = getBestPhysicalDevice(instance, surface);
+			return createLogicalDevice(bestDevice, surface, VK_QUEUE_GRAPHICS_BIT);
+		}
+
 
 		int getQueueFamilyIndex(const QueueFamilyProperties & queueFamilyProperties, VkQueueFlags flag = VK_QUEUE_GRAPHICS_BIT) const;
 		int getQueueFamilyIndex(const PhysicalDeviceStuffs & physicalDeviceStuffs, VkQueueFlags flag = VK_QUEUE_GRAPHICS_BIT) const {
@@ -280,8 +286,13 @@ namespace bhd
 			return inquirePhysicalDeviceSurfaceSupport(physicalDeviceStuffs, index, surface);
 		}
 
+	public:
+
+		operator VkDevice() const { return device; }
+
+
 		void release() {
-			physicalDeviceStuffs.release();
+			physicalDeviceStuffList.release();
 			if (device != VK_NULL_HANDLE)
 				vkDestroyDevice(device,nullptr);
 			device = VK_NULL_HANDLE;
@@ -292,7 +303,7 @@ namespace bhd
 		//----------------------------------
 
 		// List of the Physical device stuffs
-		PhysicalDeviceStuffList physicalDeviceStuffs;
+		PhysicalDeviceStuffList physicalDeviceStuffList;
 
 		//logical Device
 		VkDevice device = VK_NULL_HANDLE;

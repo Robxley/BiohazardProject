@@ -44,6 +44,11 @@ namespace bhd
 
 
 	private:
+
+#ifdef _glfw3_h_
+		GLFWwindow *glfwWindow = nullptr;
+#endif
+
 		//Vulkan stuffs
 		//------------------------------------------------------------------------
 		//------------------------------------------------------------------------
@@ -59,11 +64,12 @@ namespace bhd
 		VulkanSurface surface;
 
 		//Device
-		VulkanDevices device;
+		VulkanDevice device;
 
-#ifdef _glfw3_h_
-		GLFWwindow *glfwWindow = nullptr;
-#endif
+		//Swap Chain
+		VulkanSwapChain swapChain;
+
+
 
 	}; //class BioVulkan
 

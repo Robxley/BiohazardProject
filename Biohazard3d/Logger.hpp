@@ -212,18 +212,55 @@ namespace bhd
 #define BHD_LOG_INSTANCE(file)
 #endif
 
+
+#define BHD_VOID   void
+
 #ifndef BHD_LOG
-#define BHD_LOG(msg)	
+#define BHD_LOG(msg) BHD_VOID
 #endif
 
 #ifndef BHD_LOG_ERROR
-#define BHD_LOG_ERROR(msg)	
+#define BHD_LOG_ERROR(msg)	BHD_VOID
 #endif
 
 #ifndef BHD_LOG_WARNING
-#define BHD_LOG_WARNING(msg)	
+#define BHD_LOG_WARNING(msg)	BHD_VOID
 #endif
 
+#ifndef BHD_LOG_FIELD
+#define BHD_LOG_FIELD(msg)	BHD_VOID
+#endif
+
+#ifndef BHD_LOG_LIST
+#define BHD_LOG_LIST(title,list) BHD_VOID
+#endif
+
+
+#ifndef BHD_LOG_STEP_PP
+#define BHD_LOG_STEP_PP(n)	BHD_VOID
+#endif
+
+#ifndef BHD_LOG_RESET_PP
+#define BHD_LOG_RESET_PP BHD_VOID
+#endif
+
+#ifndef BHD_LOG_POP
+#define BHD_LOG_POP	BHD_VOID
+#endif
+
+#ifndef BHD_LOG_PUSH
+#define BHD_LOG_PUSH BHD_VOID
+#endif
+
+#ifndef BHD_NEW_LINE
+#define BHD_NEW_LINE BHD_VOID
+#endif
+
+#ifndef BHD_LOG_NEW_SECTION
+#define BHD_LOG_NEW_SECTION BHD_VOID
+#endif
+
+	
 
 #endif	//_BHD_LOGGER_H
 

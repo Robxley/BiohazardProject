@@ -36,7 +36,7 @@ void VulkanInstance::release()
 VkResult VulkanInstance::validation()
 {
 	VkResult avaiblable = VK_SUCCESS;
-	BHD_LOG_NEW_SECTION
+	BHD_LOG_NEW_SECTION;
 	BHD_LOG("Extension Validation :");
 	BHD_LOG_PUSH;
 	if (!checkAvailability(extensions, getAvailableExtensions()))	//Check if all required extension are available
@@ -91,10 +91,10 @@ std::vector<std::string> VulkanInstance::getAvailableLayers()
 
 void VulkanInstance::info()
 {
-	BHD_LOG_NEW_SECTION
+	BHD_LOG_NEW_SECTION;
 	BHD_LOG("About Vulkan:");
 	BHD_LOG_PUSH;
-		
+
 	auto extensionNames = getAvailableExtensions();
 	BHD_LOG_LIST("Extensions:", extensionNames);
 

@@ -14,7 +14,7 @@
 
 namespace bhd
 {
-	inline std::string vkresultToString(VkResult result)
+	inline std::string vkResultToString(VkResult result)
 	{
 		std::string strResult;
 		switch (result)
