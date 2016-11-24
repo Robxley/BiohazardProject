@@ -51,7 +51,7 @@ namespace bhd
 
 		//get physical device stuffs by index
 		PhysicalDeviceStuffs getPhysicalDeviceStuffs(int i) const {
-			BHD_ASSERT_LOG(i < count(), "out of range");
+			BHD_ASSERT(i < count());
 			return{
 				validVectorPtr(physicalDeviceNames,i),
 				validVectorPtr(physicalDevices,i),
@@ -274,7 +274,7 @@ namespace bhd
 
 		int getQueueFamilyIndex(const QueueFamilyProperties & queueFamilyProperties, VkQueueFlags flag = VK_QUEUE_GRAPHICS_BIT) const;
 		int getQueueFamilyIndex(const PhysicalDeviceStuffs & physicalDeviceStuffs, VkQueueFlags flag = VK_QUEUE_GRAPHICS_BIT) const {
-			BHD_ASSERT_LOG(physicalDeviceStuffs.queueFamilyProperties != nullptr, "Empty pointer");
+			BHD_ASSERT(physicalDeviceStuffs.queueFamilyProperties != nullptr);
 			return getQueueFamilyIndex(*physicalDeviceStuffs.queueFamilyProperties, flag);
 		}
 
@@ -298,7 +298,7 @@ namespace bhd
 			device = VK_NULL_HANDLE;
 		}
 	
-	private:
+	protected:
 		//Variables
 		//----------------------------------
 

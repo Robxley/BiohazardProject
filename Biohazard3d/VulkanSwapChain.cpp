@@ -13,7 +13,7 @@ VkResult VulkanSwapChain::create(const VkDevice & _device, const VkSwapchainCrea
 	vkGetSwapchainImagesKHR(device, swapChain, &imageCount, nullptr);
 	swapChainImages.resize(imageCount);
 	vkGetSwapchainImagesKHR(device, swapChain, &imageCount, swapChainImages.data());
-
+	return result;
 }
 
 void VulkanSwapChain::release() {
@@ -37,7 +37,7 @@ VkSwapchainCreateInfoKHR SwapChainFeatures::pickSwapChain(
 ) const
 {
 
-	BHD_ASSERT_LOG(IsValid(), "Swap Chain Features aren't Valids");
+	BHD_ASSERT_MSG(IsValid(), "Swap Chain Features aren't Valids");
 
 	surfaceFormat = pickSurfaceFormat(surfaceFormat);
 	presentMode = pickPresentMode(presentMode);

@@ -41,7 +41,7 @@
 #pragma once
 
 #include <cassert>
-
+#ifdef _DEBUG
 /**
 *\~english
 *\brief		Biohazard assertion macro
@@ -51,13 +51,10 @@
 *\param[in]	Expression à tester
 */
 #define BHD_ASSERT(w)  {if(!(w)){ BHD_LOG_ERROR((#w));}} assert(w);
-
-#ifdef _DEBUG
-#define BHD_ASSERT_LOG(w,msg)	{BHD_ASSERT(w); if(!(w)){ BHD_LOG_ERROR(msg) ;}}
-#define BHD_ASSERT_LOG_R(w,msg,r) {BHD_ASSERT(w); if(!(w)){ BHD_LOG_ERROR(msg) ; return r;}}
+#define BHD_ASSERT_MSG(w,msg)	{ if(!(w)){ BHD_LOG_ERROR(msg) ;} BHD_ASSERT(w);}
 #else
-#define BHD_ASSERT_LOG(w,msg)	
-#define BHD_ASSERT_LOG_R(w,msg,r) 
+#define BHD_ASSERT(w) 
+#define BHD_ASSERT_MSG(w,msg)	
 #endif
 
 #include "Logger.hpp"

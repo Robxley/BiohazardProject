@@ -1,6 +1,7 @@
 #include "BioVulkan.hpp"
 #include "VulkanTools.hpp"
 #include "VulkanDevice.hpp"
+#include "VulkanContext.h"
 
 using namespace bhd;
 
@@ -10,6 +11,10 @@ VkResult BioVulkan::init(const std::vector<std::string> & extensions, const std:
 	BHD_LOG("Vulkan initialisaion:");
 	BHD_LOG_PUSH;
 	VkResult result;
+
+	TestContext(glfwWindow, extensions, layers);
+
+
 
 	instance.extensions = extensions;
 	instance.layers = layers;

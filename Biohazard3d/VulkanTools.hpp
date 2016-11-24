@@ -219,7 +219,7 @@ namespace bhd
 		{
 			release();
 			if (_instance != VK_NULL_HANDLE) instance = _instance;
-			BHD_ASSERT_LOG(_instance != VK_NULL_HANDLE, "Instance is VK_NULL_HANDLE");
+			BHD_ASSERT(_instance != VK_NULL_HANDLE);
 			auto vkCreateDebugReportCallbackEXT = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT");
 			if (vkCreateDebugReportCallbackEXT != nullptr)
 				return vkCreateDebugReportCallbackEXT(instance, &createInfo, nullptr, &debugReportCallback);

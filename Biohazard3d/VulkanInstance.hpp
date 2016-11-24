@@ -14,6 +14,15 @@ namespace bhd
 		std::vector<std::string> extensions;
 		std::vector<std::string> layers;
 
+		void SetExtensions(const std::vector<std::string> & ext) { extensions = ext	; }
+		void SetLayers(const std::vector<std::string> & lay) { layers = lay; }
+
+		void FullExtensionsLayers()
+		{
+			extensions = getAvailableExtensions();
+			layers = getAvailableLayers();
+		}
+
 	public:
 		VulkanInstance();
 		~VulkanInstance() { release(); };
@@ -44,7 +53,7 @@ namespace bhd
 			return instance;
 		}
 
-	private:
+	protected:
 
 		//Application Info struct
 		VkApplicationInfo appInfo = {
