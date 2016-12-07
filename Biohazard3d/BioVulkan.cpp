@@ -12,10 +12,6 @@ VkResult BioVulkan::init(const std::vector<std::string> & extensions, const std:
 	BHD_LOG_PUSH;
 	VkResult result;
 
-	TestContext(glfwWindow, extensions, layers);
-
-
-
 	instance.extensions = extensions;
 	instance.layers = layers;
 

@@ -48,6 +48,8 @@ namespace bhd
 			mainLoop();
 		}
 
+		const BioWindow & GetBioWindow() { return window; }
+		const BioVulkan & GetBioVulkan() { return vulkan; }
 	private:
 
 		void initWindow();

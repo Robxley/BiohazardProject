@@ -2,6 +2,38 @@
 
 using namespace bhd;
 
+void VulkanContext::release()
+{
+
+	//Destroy SwapChain
+	swapChainImages.clear();
+	if (swapChain != VK_NULL_HANDLE)
+		vkDestroySwapchainKHR(device, swapChain, nullptr);
+
+	//Destroy device
+	queues.clear();
+	if (device != VK_NULL_HANDLE)
+		vkDestroyDevice(device, nullptr);
+
+	//Destroy surface
+	if (surface != VK_NULL_HANDLE)
+		vkDestroySurfaceKHR(instance, surface, nullptr);
+
+	//Destroy surface
+	if (instance != VK_NULL_HANDLE)
+		vkDestroyInstance(instance,  nullptr);
+
+	//Default values
+	device = VK_NULL_HANDLE;
+	surface = VK_NULL_HANDLE;
+	swapChain = VK_NULL_HANDLE;
+	extent2D = { 0,0 };
+	surfaceFormat = { VK_FORMAT_R8G8B8A8_UNORM, VK_COLORSPACE_SRGB_NONLINEAR_KHR };
+	presentMode = VK_PRESENT_MODE_MAILBOX_KHR;
+	swapchainCreateInfo = {};
+}
+
+
 VkResult VulkanInstanceFactory::fillContext(VulkanContext & vkContext)
 {
 	VkResult result = VulkanInstance::init();

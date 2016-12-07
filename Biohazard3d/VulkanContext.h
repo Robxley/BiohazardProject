@@ -19,7 +19,8 @@ namespace bhd
 	{
 	public:
 		VulkanContext() {}
-		~VulkanContext() {}
+		~VulkanContext() { release(); }
+		void release();
 
 		//Instance stuffs
 		VkInstance instance = VK_NULL_HANDLE;;
@@ -97,7 +98,11 @@ namespace bhd
 		return context;
 	}
 
-	inline void TestContext(void * ptr, std::vector<std::string> extensions = {}, std::vector<std::string> layers = {})
+	inline void TestContext(
+		void * ptr, 
+		std::vector<std::string> extensions = { "VK_KHR_surface" , "VK_KHR_win32_surface", "VK_EXT_debug_report" },
+		std::vector<std::string> layers = { "VK_LAYER_LUNARG_standard_validation" }
+	)
 	{
 		VulkanContext context;
 		VulkanInstanceFactory instanceFactory;
@@ -108,7 +113,6 @@ namespace bhd
 		instanceFactory.SetExtensions(extensions);
 		instanceFactory.SetLayers(layers);
 		surfaceFactory.SetGLFWwindow((GLFWwindow*)ptr);
-
 
 		context << instanceFactory;
 		context << surfaceFactory;
