@@ -1,6 +1,6 @@
 # BiohazardProject
 A simple experimental project used to learn / try everything I could have in my brain ...
-For this project, my brain is focused on the Vulcan API (and only on vulkan, I don't have a multithread brain yet).
+For this project, my brain is focused on the Vulkan API (and only on vulkan, I don't have a multithread brain yet).
 
 Why Biohazard ?
 
