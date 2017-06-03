@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\Vulkan">
+      <UniqueIdentifier>{47858fce-aaf3-402f-b687-b3ef68b32ae4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Vulkan">
+      <UniqueIdentifier>{29baa3aa-00a4-4920-bbcb-5f99cb70f9be}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -24,26 +30,29 @@
     <ClCompile Include="BioApp.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="VulkanTools.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="VulkanInstance.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="VulkanContext.cpp">
+      <Filter>Fichiers sources\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="VulkanDevice.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="VulkanSurface.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="VulkanSwapChain.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="VulkanContext.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="VulkanGraphicPipeline.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanInstance.cpp">
+      <Filter>Fichiers sources\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanSurface.cpp">
+      <Filter>Fichiers sources\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanSwapChain.cpp">
+      <Filter>Fichiers sources\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanTools.cpp">
+      <Filter>Fichiers sources\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanShader.cpp">
+      <Filter>Fichiers sources\Vulkan</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -62,29 +71,32 @@
     <ClInclude Include="Common.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="VulkanTools.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="Singleton.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="VulkanInstance.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="VulkanContext.h">
+      <Filter>Fichiers d%27en-tête\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="VulkanDevice.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="VulkanSurface.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="VulkanSwapChain.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="VulkanContext.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="VulkanGraphicPipeline.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanInstance.hpp">
+      <Filter>Fichiers d%27en-tête\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanSurface.hpp">
+      <Filter>Fichiers d%27en-tête\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanSwapChain.h">
+      <Filter>Fichiers d%27en-tête\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanTools.hpp">
+      <Filter>Fichiers d%27en-tête\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanShader.h">
+      <Filter>Fichiers d%27en-tête\Vulkan</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
