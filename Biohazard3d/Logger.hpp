@@ -11,7 +11,7 @@
 
 #ifdef BHD_VERBOSE
 
-#if defined(__ANDROID__) || defined(__IPHONEOS__) && defined(_SDL_H)
+#if (defined(__ANDROID__) || defined(__IPHONEOS__)) && defined(_SDL_H)
 	#define BHD_USE_SDL_LOG
 #elif defined(BHD_USE_FILE_LOG) || defined(BHD_USE_COUT_FILE_LOG)
 	#ifndef BHD_LOG_FILE
