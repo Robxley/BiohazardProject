@@ -22,23 +22,24 @@ namespace bhd
 		~VulkanContext() { release(); }
 		void release();
 
-		//Instance stuffs
-		VkInstance instance = VK_NULL_HANDLE;;
+		//Instance stuffs (filled by VulkanInstanceFactory)
+		VkInstance instance = VK_NULL_HANDLE;					//Vulkan instance
 
-		//Surface stuffs
-		VkSurfaceKHR surface = VK_NULL_HANDLE;
-		VkExtent2D extent2D = { 0,0 };
+		//Surface stuffs (filled by VulkanSurfaceFactory)
+		VkSurfaceKHR surface = VK_NULL_HANDLE;					//Vulkan surface
+		VkExtent2D extent2D = { 0,0 };							//related extent2d (generally windows size (w,h))
 		VkSurfaceFormatKHR surfaceFormat = { VK_FORMAT_R8G8B8A8_UNORM, VK_COLORSPACE_SRGB_NONLINEAR_KHR };
 		VkPresentModeKHR presentMode = VK_PRESENT_MODE_MAILBOX_KHR;
 
-		//Device stuffs
-		VkDevice device = VK_NULL_HANDLE;
-		std::vector<VkQueue> queues;
+		//Device stuffs (filled by VulkanDeviceFactory)
+		VkDevice device = VK_NULL_HANDLE;						//Vulkan device (your gpu)
+		std::vector<VkQueue> queues;							//associeted queue (generally graphic queues)
 
-		//Swapchain stuffs
-		VkSwapchainCreateInfoKHR swapchainCreateInfo;
-		VkSwapchainKHR swapChain = VK_NULL_HANDLE;
-		std::vector<VkImage> swapChainImages;
+		//Swapchain stuffs (filled by VulkanSwapChainFactory)
+		VkSwapchainCreateInfoKHR swapchainCreateInfo;			//Vulkan swapchain info used to create the vulkan swapchain
+		VkSwapchainKHR swapChain = VK_NULL_HANDLE;				//Vulkan swapchain
+		std::vector<VkImage> swapChainImages;					//related images
+		std::vector<VkImageView> swapChainImageViews;			//Image views linked to swapchain images (same extend, same format ...)
 
 	};
 
@@ -51,7 +52,7 @@ namespace bhd
 		virtual VkResult fillContext(VulkanContext & vkContext) = 0;
 
 		template <typename VKItem, VKItem resetValue = VK_NULL_HANDLE >
-		VKItem Move(VKItem & item, VKItem reset = resetValue) {
+		VKItem move(VKItem & item, VKItem reset = resetValue) {
 			VKItem tmp = item; 
 			item = reset;
 			return tmp;

@@ -5,6 +5,11 @@ using namespace bhd;
 void VulkanContext::release()
 {
 
+	//Destroy swapChain image view
+	for (auto & imageView : swapChainImageViews)
+		vkDestroyImageView(device, imageView, nullptr);
+	swapChainImageViews.clear();
+
 	//Destroy SwapChain
 	swapChainImages.clear();
 	if (swapChain != VK_NULL_HANDLE)
@@ -37,7 +42,7 @@ void VulkanContext::release()
 VkResult VulkanInstanceFactory::fillContext(VulkanContext & vkContext)
 {
 	VkResult result = VulkanInstance::init();
-	vkContext.instance = Move(instance);		//Move the instance in the context
+	vkContext.instance = move(instance);		//Move the instance in the context
 	return result;
 }
 
@@ -45,7 +50,7 @@ VkResult VulkanSurfaceFactory::fillContext(VulkanContext & vkContext)
 {
 	VkResult result = VulkanSurface::init(vkContext.instance);
 	//Move the surface stuffs in the context
-	vkContext.surface = Move(surface);		
+	vkContext.surface = move(surface);
 	vkContext.extent2D = extent2D;
 	vkContext.surfaceFormat = surfaceFormat;
 	vkContext.presentMode = presentMode;
@@ -76,7 +81,7 @@ VkResult VulkanDeviceFactory::fillContext(VulkanContext & vkContext)
 
 	//Create a logical device from the best physical device
 	VkResult result = VulkanDevice::createLogicalDevice(pickedPhysicalDevice, surface, VK_QUEUE_GRAPHICS_BIT);
-	vkContext.device = Move(device);	//Move the device in the context 
+	vkContext.device = move(device);	//Move the device in the context 
 	vkContext.swapchainCreateInfo = pickedPhysicalDevice.swapChainFeatures->pickSwapChain(surface,extent2D,surfaceFormat,presentMode);
 	return result;
 }
@@ -87,7 +92,12 @@ VkResult VulkanSwapChainFactory::fillContext(VulkanContext & vkContext)
 	BHD_ASSERT(vkContext.surface != VK_NULL_HANDLE);
 
 	VkResult result = VulkanSwapChain::create(vkContext.device, vkContext.swapchainCreateInfo);
-	vkContext.swapChain = Move(swapChain);
+	vkContext.swapChain = move(swapChain);
 	vkContext.swapChainImages = std::move(swapChainImages);
+	vkContext.swapChainImageViews = std::move(swapChainImageViews);
+
+	swapChainImages.clear();
+	swapChainImageViews.clear();
+
 	return result;
 }

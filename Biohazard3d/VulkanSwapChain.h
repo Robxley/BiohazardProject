@@ -14,20 +14,27 @@ namespace bhd
 	{
 
 	public:
-		VkSwapchainKHR swapChain = VK_NULL_HANDLE;
-		VkDevice device;
-		std::vector<VkImage> swapChainImages;
 
 		~VulkanSwapChain() {
 			release();
 		}
 
-		//Create the swap chain object
-		VkResult create(const VkDevice & _device, const VkSwapchainCreateInfoKHR & swapChainInfo);
+		//Create the swap chain object and link image view objects to the swap chain images
+		VkResult create(const VkDevice & _device, const VkSwapchainCreateInfoKHR & _swapChainInfo);
 		
 		void release();
 
 		operator VkSwapchainKHR() { return swapChain; };
+
+	protected:
+
+		VkSwapchainKHR swapChain = VK_NULL_HANDLE;		//vulkan swap chain object
+		VkSwapchainCreateInfoKHR swapChainInfo;			//swap chain info
+
+		VkDevice device;								//linked device
+		std::vector<VkImage> swapChainImages;			//list of the joined swapchain images
+		std::vector<VkImageView> swapChainImageViews;	//Image views working on the swapchain images
+
 	};
 
 

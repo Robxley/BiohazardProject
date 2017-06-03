@@ -5,23 +5,64 @@
 using namespace bhd;
 
 
-VkResult VulkanSwapChain::create(const VkDevice & _device, const VkSwapchainCreateInfoKHR & swapChainInfo) {
+VkResult VulkanSwapChain::create(const VkDevice & _device, const VkSwapchainCreateInfoKHR & _swapChainInfo) 
+{
+
+	//Init
 	device = _device;
+	swapChainInfo = _swapChainInfo;
+	
+	//Create swap chain
 	VkResult result = vkCreateSwapchainKHR(device, &swapChainInfo, nullptr, &swapChain);
 	if (result != VK_SUCCESS) return result;
+	
+	//Get the swapchain images
 	uint32_t imageCount = 0;
 	vkGetSwapchainImagesKHR(device, swapChain, &imageCount, nullptr);
 	swapChainImages.resize(imageCount);
 	vkGetSwapchainImagesKHR(device, swapChain, &imageCount, swapChainImages.data());
+
+	//Link some image viewes to the swapchain images
+	swapChainImageViews.resize(imageCount);
+	for (std::size_t i = 0; i < swapChainImageViews.size(); i++)
+	{
+		VkImageViewCreateInfo createInfo = {};
+		createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+		createInfo.image = swapChainImages[i];
+		createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+		createInfo.format = swapChainInfo.imageFormat;
+		createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+		createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+		createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+		createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+		createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		createInfo.subresourceRange.baseMipLevel = 0;
+		createInfo.subresourceRange.levelCount = 1;
+		createInfo.subresourceRange.baseArrayLayer = 0;
+		createInfo.subresourceRange.layerCount = 1;
+
+		if (vkCreateImageView(device, &createInfo, nullptr, &swapChainImageViews[i]) != VK_SUCCESS) {
+			BHD_THROW_WITH_LOG("failed to create image views!")
+		}
+	}
+
 	return result;
 }
 
-void VulkanSwapChain::release() {
+
+void VulkanSwapChain::release() 
+{
+	for (auto & imageView : swapChainImageViews)
+		vkDestroyImageView(device, imageView, nullptr);
+	swapChainImageViews.clear();
+
 	if (swapChain != VK_NULL_HANDLE)
 	{
 		vkDestroySwapchainKHR(device, swapChain, nullptr);
 		swapChain = VK_NULL_HANDLE;
 	}
+
+	device = VK_NULL_HANDLE;
 }
 
 
