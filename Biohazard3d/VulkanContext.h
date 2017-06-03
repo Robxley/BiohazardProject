@@ -74,7 +74,6 @@ namespace bhd
 			VkResult fillContext(VulkanContext & vkContext);
 	};
 
-
 	//Factory to fill a VulkanContext with a logical device
 	class VulkanDeviceFactory : public VulkanFactory<VulkanDevice>
 	{
@@ -89,7 +88,6 @@ namespace bhd
 			VkResult fillContext(VulkanContext & vkContext);
 	};
 
-
 	//Generic operator to fill a vulkan context
 	template <typename VFactory>
 	VulkanContext& operator<<(VulkanContext &context, VFactory & vulkanFactory)
@@ -99,6 +97,8 @@ namespace bhd
 		return context;
 	}
 
+#ifdef _glfw3_h_
+	//GLFW vulkan context exemple
 	inline void GLFWVulkanContext(
 		GLFWwindow * ptr,
 		std::vector<std::string> extensions = { "VK_KHR_surface" , "VK_KHR_win32_surface", "VK_EXT_debug_report" },
@@ -120,6 +120,8 @@ namespace bhd
 		context << deviceFactory;
 		context << swapChainFactory;
 	}
+#endif
+
 }
 
 #endif

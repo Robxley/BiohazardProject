@@ -42,6 +42,9 @@
     <ClCompile Include="VulkanContext.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="VulkanGraphicPipeline.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Logger.hpp">
@@ -80,5 +83,25 @@
     <ClInclude Include="VulkanContext.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="VulkanGraphicPipeline.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\default.frag">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\default.vert">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\ShaderCompilation.bat">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\default.frag.spv">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shaders\default.vert.spv">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
   </ItemGroup>
 </Project>

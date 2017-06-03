@@ -16,6 +16,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="VulkanContext.cpp" />
     <ClCompile Include="VulkanDevice.cpp" />
+    <ClCompile Include="VulkanGraphicPipeline.cpp" />
     <ClCompile Include="VulkanInstance.cpp" />
     <ClCompile Include="VulkanSurface.cpp" />
     <ClCompile Include="VulkanSwapChain.cpp" />
@@ -30,10 +31,18 @@
     <ClInclude Include="Singleton.hpp" />
     <ClInclude Include="VulkanContext.h" />
     <ClInclude Include="VulkanDevice.hpp" />
+    <ClInclude Include="VulkanGraphicPipeline.h" />
     <ClInclude Include="VulkanInstance.hpp" />
     <ClInclude Include="VulkanSurface.hpp" />
     <ClInclude Include="VulkanSwapChain.h" />
     <ClInclude Include="VulkanTools.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\default.frag.spv" />
+    <None Include="shaders\default.vert.spv" />
+    <None Include="shaders\ShaderCompilation.bat" />
+    <None Include="shaders\default.frag" />
+    <None Include="shaders\default.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7714F54C-6B2F-4CD0-B509-653B67A322AF}</ProjectGuid>
