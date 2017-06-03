@@ -5,9 +5,9 @@
 //#define BHD_USE_FILE_LOG
 #define BHD_USE_COUT_FILE_LOG
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 #define BHD_VERBOSE		//Use to enable the logger
-#endif
+//#endif
 
 #ifdef BHD_VERBOSE
 
@@ -213,7 +213,7 @@ namespace bhd
 #endif
 
 
-#define BHD_VOID   void
+#define BHD_VOID   
 
 #ifndef BHD_LOG
 #define BHD_LOG(msg) BHD_VOID

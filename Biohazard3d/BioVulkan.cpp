@@ -15,7 +15,7 @@ VkResult BioVulkan::init(const std::vector<std::string> & extensions, const std:
 	instance.extensions = extensions;
 	instance.layers = layers;
 
-	//result log tool
+	//result log fct
 	//--------------------------------------
 	auto resultTest = [&](const char * msg) {
 		if (result != VK_SUCCESS) {
@@ -52,7 +52,7 @@ VkResult BioVulkan::init(const std::vector<std::string> & extensions, const std:
 	BHD_LOG_LIST("Available Physical Devices :", names);
 
 	//Pick the "best physical" device
-	auto pickedPhysicalDevice = device.getBestPhysicalDevice(instance, surface);
+	auto pickedPhysicalDevice = device.pickBestPhysicalDevice(instance, surface);
 	BHD_LOG("Picked Physical Device : "<<*pickedPhysicalDevice.name);
 	pickedPhysicalDevice.extensionNames->info("Supported Extensions:");
 
@@ -72,13 +72,13 @@ VkResult BioVulkan::init(const std::vector<std::string> & extensions, const std:
 
 void BioVulkan::release()
 {
-	/*swapChain.release();
+	swapChain.release();
 	device.release();
 	surface.release();
 #ifdef _DEBUG
 	debugVulkanLayer.release();
 #endif
-	instance.release();*/
+	instance.release();
 }
 
 

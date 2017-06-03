@@ -36,7 +36,9 @@ int main()
 
 		auto glfwWindow = glfwCreateWindow(800, 600, "Test context", nullptr, nullptr);
 
-		TestContext(glfwWindow);
+		GLFWVulkanContext(glfwWindow);
+
+		glfwDestroyWindow(glfwWindow);
 	}
 	catch (const std::runtime_error& e) {
 		BHD_LOG_ERROR(e.what());

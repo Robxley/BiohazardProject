@@ -98,8 +98,8 @@ namespace bhd
 		return context;
 	}
 
-	inline void TestContext(
-		void * ptr, 
+	inline void GLFWVulkanContext(
+		GLFWwindow * ptr,
 		std::vector<std::string> extensions = { "VK_KHR_surface" , "VK_KHR_win32_surface", "VK_EXT_debug_report" },
 		std::vector<std::string> layers = { "VK_LAYER_LUNARG_standard_validation" }
 	)

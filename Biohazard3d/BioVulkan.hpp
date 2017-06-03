@@ -31,7 +31,7 @@ namespace bhd
 
 		void release();
 
-		//Call init function with extensions and layers required by GLFW
+		//Call init function with extensions and layers required
 		VkResult init(const std::vector<std::string> & extensions, const std::vector<std::string> & layers = {});
 
 	public:

@@ -35,7 +35,7 @@ namespace bhd
 		static void info();
 
 		//Check if all given extensions and layers are available
-		VkResult validation();
+		VkResult validation() const;
 
 		//Create a vulkan context ready to draw (extensions, layers, surface, swapchain ...)
 		VkResult init();
@@ -49,7 +49,7 @@ namespace bhd
 		
 		void release();
 
-		operator VkInstance() {
+		operator VkInstance() const {
 			return instance;
 		}
 

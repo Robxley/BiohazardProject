@@ -16,18 +16,11 @@
 
 namespace bhd
 {
-	class BioWindow
+	using BioWindow = struct SBioWindow
 	{
-	public:
 		int width = 800;
 		int height = 600;
 		std::string name = "biohazard";
-		void* ptr = nullptr;  //GLFWwindow*
-#ifdef _glfw3_h_
-		GLFWwindow* GetWindow() { return (GLFWwindow*)ptr; }
-#else
-		void* GetWindow() { return (void*)ptr; }
-#endif
 	};
 
 	class BioApp
@@ -59,6 +52,12 @@ namespace bhd
 	private:
 		BioWindow window;
 		BioVulkan vulkan;
+
+
+#ifdef _glfw3_h_
+		GLFWwindow* glfwWindow = nullptr;
+#endif
+
 	};
 }
 

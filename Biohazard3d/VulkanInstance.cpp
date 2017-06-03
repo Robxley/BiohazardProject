@@ -33,7 +33,7 @@ void VulkanInstance::release()
 	}
 	instance = VK_NULL_HANDLE;
 }
-VkResult VulkanInstance::validation()
+VkResult VulkanInstance::validation() const
 {
 	VkResult avaiblable = VK_SUCCESS;
 	BHD_LOG_NEW_SECTION;

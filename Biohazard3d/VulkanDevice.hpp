@@ -257,7 +257,7 @@ namespace bhd
 			return pickByScore(scoreMaker, surface, extensionNames, score);
 		}
 
-		PhysicalDeviceStuffs getBestPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, std::vector<std::string> extensionNames = { VK_KHR_SWAPCHAIN_EXTENSION_NAME })
+		PhysicalDeviceStuffs pickBestPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, std::vector<std::string> extensionNames = { VK_KHR_SWAPCHAIN_EXTENSION_NAME })
 		{
 			getPhysicalDeviceStuffs(instance, surface);
 			return pickByScore(surface,extensionNames);
@@ -267,7 +267,7 @@ namespace bhd
 		VkResult createLogicalDevice(const PhysicalDeviceStuffs & physicalDeviceStuffs, VkSurfaceKHR surface = VK_NULL_HANDLE, VkQueueFlags flag = VK_QUEUE_GRAPHICS_BIT,  std::vector<std::string> extensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME }, std::vector<std::string> layers = std::vector<std::string>());
 
 		VkResult createBestLogicalDevice(VkInstance instance, VkSurfaceKHR surface, std::vector<std::string> extensionNames = { VK_KHR_SWAPCHAIN_EXTENSION_NAME }) {
-			auto bestDevice = getBestPhysicalDevice(instance, surface);
+			auto bestDevice = pickBestPhysicalDevice(instance, surface);
 			return createLogicalDevice(bestDevice, surface, VK_QUEUE_GRAPHICS_BIT);
 		}
 

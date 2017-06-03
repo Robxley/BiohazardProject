@@ -70,7 +70,7 @@ VkResult VulkanDeviceFactory::fillContext(VulkanContext & vkContext)
 	BHD_LOG_LIST("Available Physical Devices :", names);
 
 	//Pick the "best physical" device
-	auto pickedPhysicalDevice = VulkanDevice::getBestPhysicalDevice(instance, surface);
+	auto pickedPhysicalDevice = VulkanDevice::pickBestPhysicalDevice(instance, surface);
 	BHD_LOG("Picked Physical Device : " << *pickedPhysicalDevice.name);
 	pickedPhysicalDevice.extensionNames->info("Supported Extensions:");
 
