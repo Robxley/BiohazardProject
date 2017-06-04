@@ -196,12 +196,47 @@ void VulkanGraphicPipeline::initRenderPass(VkFormat format)
 
 }
 
+
+VkResult VulkanGraphicPipeline::createSwapChainFramebuffer(const VulkanSwapChain & swapChain)
+{
+	VkResult result = VK_ERROR_INITIALIZATION_FAILED;
+
+	auto & swapChainImageViews = swapChain.getImageViews();
+	swapChainFramebuffers.resize(swapChainImageViews.size());
+
+	VkExtent2D swapChainExtent = swapChain;
+
+	for (int i = 0; i < swapChainImageViews.size(); i++)
+	{
+		VkImageView attachments[] = { swapChainImageViews[i]};
+
+		VkFramebufferCreateInfo framebufferInfo = {};
+		framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+		framebufferInfo.renderPass = renderPass;
+		framebufferInfo.attachmentCount = 1;
+		framebufferInfo.pAttachments = attachments;
+		framebufferInfo.width = swapChainExtent.width;
+		framebufferInfo.height = swapChainExtent.height;
+		framebufferInfo.layers = 1;
+
+		if ((result = vkCreateFramebuffer(device, &framebufferInfo, nullptr, &swapChainFramebuffers[i])) != VK_SUCCESS) {
+			BHD_THROW_WITH_LOG("failed to create framebuffer!");
+		}
+	}
+
+	return result;
+}
+
+
+
+
 VkResult VulkanGraphicPipeline::createGraphicPipeline(VkDevice _device, const std::vector<VulkanShader> & shaderStages)
 {
 	std::vector<VkPipelineShaderStageCreateInfo> vShaderStageInfo;
 	vShaderStageInfo.assign(shaderStages.begin(), shaderStages.end());
 	return createGraphicPipeline(_device, vShaderStageInfo);
 }
+
 
 
 VkResult VulkanGraphicPipeline::createGraphicPipeline(VkDevice _device, const std::vector<VkPipelineShaderStageCreateInfo> & shaderStages)
@@ -257,6 +292,13 @@ VkResult VulkanGraphicPipeline::createGraphicPipeline(VkDevice _device, const st
 
 void VulkanGraphicPipeline::release()
 {
+
+
+	for (auto & frameBuffer : swapChainFramebuffers) 
+		vkDestroyFramebuffer(device, frameBuffer, nullptr);
+
+	swapChainFramebuffers.clear();
+
 	if (graphicsPipeline != VK_NULL_HANDLE)
 		vkDestroyPipeline(device, graphicsPipeline, nullptr);
 	graphicsPipeline = VK_NULL_HANDLE;

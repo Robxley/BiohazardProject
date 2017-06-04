@@ -78,10 +78,12 @@ VkResult BioVulkan::init(const std::vector<std::string> & extensions, const std:
 	//Create the graphic pipeline (and the render pass)
 	//--------------------------------------
 
-	graphicPipeline.initGraphicPipeline(swapChain);
+	graphicPipeline.initFromSwapChain(swapChain);
 	result = graphicPipeline.createGraphicPipeline(device, shaderStages);
 	resultTest("Vulkan Creates Graphic Pipeline");
 
+	result = graphicPipeline.createSwapChainFramebuffer(swapChain);
+	resultTest("Vulkan Creates Frame buffer");
 
 	return result;
 }

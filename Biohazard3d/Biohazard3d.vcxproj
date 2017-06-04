@@ -16,6 +16,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="VulkanContext.cpp" />
     <ClCompile Include="VulkanDevice.cpp" />
+    <ClCompile Include="VulkanFramebuffer.cpp" />
     <ClCompile Include="VulkanGraphicPipeline.cpp" />
     <ClCompile Include="VulkanInstance.cpp" />
     <ClCompile Include="VulkanShader.cpp" />
@@ -32,6 +33,7 @@
     <ClInclude Include="Singleton.hpp" />
     <ClInclude Include="VulkanContext.h" />
     <ClInclude Include="VulkanDevice.hpp" />
+    <ClInclude Include="VulkanFramebuffer.h" />
     <ClInclude Include="VulkanGraphicPipeline.h" />
     <ClInclude Include="VulkanInstance.hpp" />
     <ClInclude Include="VulkanShader.h" />

@@ -7,6 +7,7 @@
 #include <algorithm>
 #include "vulkan/vulkan.h"
 #include "VulkanSurface.hpp"
+#include "VulkanFramebuffer.h"
 
 namespace bhd
 {
@@ -31,19 +32,21 @@ namespace bhd
 
 		//operator const std::vector<VkImage>&() const { return swapChainImages; }
 		//operator const std::vector<VkImageView>&() const { return swapChainImageViews; }
+
+		const std::vector<VkImageView>& getImageViews() const {	return swapChainImageViews;	};
 		
 	protected:
 
-		VkSwapchainKHR swapChain = VK_NULL_HANDLE;		//vulkan swap chain object
-		VkSwapchainCreateInfoKHR swapChainInfo;			//swap chain info
+		VkSwapchainKHR swapChain = VK_NULL_HANDLE;			//vulkan swap chain object
+		VkSwapchainCreateInfoKHR swapChainInfo;				//swap chain info
 
-		VkDevice device;								//linked device
-		std::vector<VkImage> swapChainImages;			//list of the joined swapchain images
-		std::vector<VkImageView> swapChainImageViews;	//Image views working on the swapchain images
+		VkDevice device;									//linked device
+		std::vector<VkImage> swapChainImages;				//list of the joined swapchain images
+		std::vector<VkImageView> swapChainImageViews;		//Image views working on the swapchain images
 
 	};
 
-
+	//Useful class used to get intel on the swap chain
 	class SwapChainFeatures
 	{
 	public:

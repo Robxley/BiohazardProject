@@ -41,7 +41,8 @@ namespace bhd
 
 		void initRenderPass(VkFormat format);
 
-		void initGraphicPipeline(const VulkanSwapChain & swapChain)
+	
+		void initFromSwapChain(const VulkanSwapChain & swapChain)
 		{
 			initVertexInput();
 			initInputAssembly();
@@ -57,7 +58,7 @@ namespace bhd
 
 		VkResult createGraphicPipeline(VkDevice _device, const std::vector<VkPipelineShaderStageCreateInfo> & shaderStages);
 		VkResult createGraphicPipeline(VkDevice _device, const std::vector<VulkanShader> & shaderStages);
-
+		VkResult createSwapChainFramebuffer(const VulkanSwapChain & swapChain);
 
 
 		void release();
@@ -106,11 +107,10 @@ namespace bhd
 		std::vector<VkDynamicState> dynamicStates;
 		VkPipelineDynamicStateCreateInfo dynamicState = {};
 
-		
-		VkPipeline graphicsPipeline;
-
-	private:
+	private:	
 		VkDevice device;
+		VkPipeline graphicsPipeline;
+		std::vector<VkFramebuffer> swapChainFramebuffers;	//Frame buffers reference to the swapchain image views
 
 	};
 }
