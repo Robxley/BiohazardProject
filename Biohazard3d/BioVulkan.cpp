@@ -27,7 +27,7 @@ VkResult BioVulkan::init(const std::vector<std::string> & extensions, const std:
 	//Vulkan instance
 	//--------------------------------------
 	result = instance.init();
-	resultTest("Vulkan Create Instance");
+	resultTest("Vulkan Creates Instance");
 
 	//Vulkan Debug report layer
 	//--------------------------------------
@@ -40,7 +40,7 @@ VkResult BioVulkan::init(const std::vector<std::string> & extensions, const std:
 	//--------------------------------------
 #ifdef _glfw3_h_
 	result = surface.initGlfw(instance, glfwWindow);
-	resultTest("GLFW Surface linked to vulkan");
+	resultTest("GLFW Surface linked to Vulkan");
 #endif 
 
 
@@ -58,20 +58,38 @@ VkResult BioVulkan::init(const std::vector<std::string> & extensions, const std:
 
 	//Create a logical device from the best physical device
 	result = device.createLogicalDevice(pickedPhysicalDevice, surface, VK_QUEUE_GRAPHICS_BIT);
-	resultTest("Vulkan Create logical device");
+	resultTest("Vulkan Creates logical device");
 
 	//Swap chain maker
 	//--------------------------------------
 
 	auto swapChainInfo = pickedPhysicalDevice.swapChainFeatures->pickSwapChain(surface);
-	swapChain.create(device, swapChainInfo);
-	resultTest("Vulkan Create Swap chain");
+	result = swapChain.create(device, swapChainInfo);
+	resultTest("Vulkan Creates Swap chain");
 
-	return VK_SUCCESS;
+
+	//Load shaders
+	//--------------------------------------
+	shaderStages.reserve(2);
+	shaderStages.emplace_back(VulkanShader(device, default_vertex_shader, VK_SHADER_STAGE_VERTEX_BIT));
+	shaderStages.emplace_back(VulkanShader(device, default_fragment_shader, VK_SHADER_STAGE_FRAGMENT_BIT));
+
+
+	//Create the graphic pipeline (and the render pass)
+	//--------------------------------------
+
+	graphicPipeline.initGraphicPipeline(swapChain);
+	result = graphicPipeline.createGraphicPipeline(device, shaderStages);
+	resultTest("Vulkan Creates Graphic Pipeline");
+
+
+	return result;
 }
 
 void BioVulkan::release()
 {
+	graphicPipeline.release();
+	shaderStages.clear();
 	swapChain.release();
 	device.release();
 	surface.release();

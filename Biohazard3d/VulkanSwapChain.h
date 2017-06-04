@@ -24,8 +24,14 @@ namespace bhd
 		
 		void release();
 
-		operator VkSwapchainKHR() { return swapChain; };
+		operator VkSwapchainKHR() const { return swapChain; }
+		operator VkSwapchainCreateInfoKHR() const { return swapChainInfo; }
+		operator VkExtent2D () const { return swapChainInfo.imageExtent; }
+		operator VkFormat () const { return swapChainInfo.imageFormat; }
 
+		//operator const std::vector<VkImage>&() const { return swapChainImages; }
+		//operator const std::vector<VkImageView>&() const { return swapChainImageViews; }
+		
 	protected:
 
 		VkSwapchainKHR swapChain = VK_NULL_HANDLE;		//vulkan swap chain object

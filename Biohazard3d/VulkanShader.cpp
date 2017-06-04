@@ -3,6 +3,31 @@
 
 using namespace bhd;
 
+VulkanShader::VulkanShader(VulkanShader && _shader)
+{
+	this->device = _shader.device;
+	this->shaderModule = _shader.shaderModule;
+	this->sharderCodeSize = _shader.sharderCodeSize;
+
+	this->shaderStageInfo = _shader.shaderStageInfo;
+	this->sharderCode = std::move(_shader.sharderCode);
+	this->invokeFunction = std::move(_shader.invokeFunction);
+	this->shaderStageInfo.pName = invokeFunction.c_str();
+
+#ifdef _DEBUG
+	this->debug_filename = std::move(_shader.debug_filename);
+	_shader.debug_filename.clear();
+#endif
+
+	_shader.device = VK_NULL_HANDLE;
+	_shader.shaderModule = VK_NULL_HANDLE;
+	_shader.sharderCodeSize = 0;
+	_shader.shaderStageInfo = {};
+	_shader.sharderCode.clear();
+	_shader.invokeFunction.clear();
+}
+
+
 void VulkanShader::loadFromFile(const std::string & filename)
 {
 	//Try to open the file at the end (to get the file size)
@@ -26,6 +51,7 @@ void VulkanShader::loadFromFile(const std::string & filename)
 
 }
 
+
 void VulkanShader::loadFromRaw(const std::vector<char> & rawCode)
 {
 	sharderCode.resize(rawCode.size() / sizeof(uint32_t) + 1);
@@ -39,6 +65,8 @@ void VulkanShader::createShader(VkShaderStageFlagBits stageFlag, const std::stri
 	if (device == VK_NULL_HANDLE) {
 		BHD_THROW_WITH_LOG("failted to create the shader, the device is undefined");
 	}
+
+	invokeFunction = invok_fct;
 
 	VkShaderModuleCreateInfo createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
@@ -55,15 +83,20 @@ void VulkanShader::createShader(VkShaderStageFlagBits stageFlag, const std::stri
 #endif
 	}
 
+#ifdef _DEBUG
+	BHD_LOG("Shader module created : " << debug_filename);
+#endif
+
 	sharderCode.clear();
 	sharderCodeSize = 0;
+
+	//Set some info about the shader (use by the pypeline)
 
 	shaderStageInfo = {};
 	shaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 	shaderStageInfo.stage = stageFlag;
 	shaderStageInfo.module = shaderModule;
-	shaderStageInfo.pName = invok_fct.c_str();
-
+	shaderStageInfo.pName = invokeFunction.c_str();
 }
 
 void VulkanShader::release()

@@ -139,8 +139,6 @@ void VulkanGraphicPipeline::initColorBlending()
 	colorBlending.blendConstants[2] = 0.0f; // Optional
 	colorBlending.blendConstants[3] = 0.0f; // Optional
 
-
-
 }
 
 void VulkanGraphicPipeline::initDynamicState()
@@ -164,10 +162,6 @@ void VulkanGraphicPipeline::initLayout()
 	pipelineLayoutInfo.pSetLayouts = nullptr; // Optional
 	pipelineLayoutInfo.pushConstantRangeCount = 0; // Optional
 	pipelineLayoutInfo.pPushConstantRanges = 0; // Optional
-
-	if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
-		BHD_THROW_WITH_LOG("failed to create pipeline layout!");
-	}
 }
 
 
@@ -202,22 +196,33 @@ void VulkanGraphicPipeline::initRenderPass(VkFormat format)
 
 }
 
-
-
-
-void VulkanGraphicPipeline::createGraphicPipeline(std::vector<VkPipelineShaderStageCreateInfo> & shaderStages)
+VkResult VulkanGraphicPipeline::createGraphicPipeline(VkDevice _device, const std::vector<VulkanShader> & shaderStages)
 {
+	std::vector<VkPipelineShaderStageCreateInfo> vShaderStageInfo;
+	vShaderStageInfo.assign(shaderStages.begin(), shaderStages.end());
+	return createGraphicPipeline(_device, vShaderStageInfo);
+}
+
+
+VkResult VulkanGraphicPipeline::createGraphicPipeline(VkDevice _device, const std::vector<VkPipelineShaderStageCreateInfo> & shaderStages)
+{
+	device = _device;
+
+	VkResult result = VK_ERROR_INITIALIZATION_FAILED;
+
 	if (device == VK_NULL_HANDLE) {
 		BHD_THROW_WITH_LOG("failted to create the shader, the device is undefined!");
+		return result;
 	}
 
-
-	if (vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
+	if ((result = vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass)) != VK_SUCCESS) {
 		BHD_THROW_WITH_LOG("failed to create render pass!");
+		return result;
 	}
 
-	if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
+	if ( (result = vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout)) != VK_SUCCESS) {
 		BHD_THROW_WITH_LOG("failed to create pipeline layout!");
+		return result;
 	}
 
 
@@ -240,10 +245,11 @@ void VulkanGraphicPipeline::createGraphicPipeline(std::vector<VkPipelineShaderSt
 	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
 	pipelineInfo.basePipelineIndex = -1; // Optional
 
-	if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
-		BHD_THROW_WITH_LOG("failed to create render pass!");
+	if ((result = vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline)) != VK_SUCCESS) {
+		BHD_THROW_WITH_LOG("failed to create graphic pipeline!");
 	}
 
+	return result;
 }
 
 
@@ -251,18 +257,18 @@ void VulkanGraphicPipeline::createGraphicPipeline(std::vector<VkPipelineShaderSt
 
 void VulkanGraphicPipeline::release()
 {
-
+	if (graphicsPipeline != VK_NULL_HANDLE)
+		vkDestroyPipeline(device, graphicsPipeline, nullptr);
+	graphicsPipeline = VK_NULL_HANDLE;
 
 	if (pipelineLayout != VK_NULL_HANDLE)
 		vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
-
+	pipelineLayout = VK_NULL_HANDLE;
 
 	if (renderPass != VK_NULL_HANDLE)
 		vkDestroyRenderPass(device, renderPass, nullptr);
-
-
-	pipelineLayout = VK_NULL_HANDLE;
 	renderPass = VK_NULL_HANDLE;
+
 	device = VK_NULL_HANDLE;
 
 	dynamicStates.clear();

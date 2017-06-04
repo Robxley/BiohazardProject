@@ -6,14 +6,15 @@
 
 #include <vector>
 #include "vulkan\vulkan.h"
-
+#include "VulkanShader.h"
+#include "VulkanSwapChain.h"
 
 namespace bhd
 {
 	class VulkanGraphicPipeline
 	{
 	public:
-		VulkanGraphicPipeline(VkDevice _device) : device(_device) {};
+		VulkanGraphicPipeline(VkDevice _device = VK_NULL_HANDLE) : device(_device) {};
 		~VulkanGraphicPipeline() { release(); }
 
 		void initVertexInput();
@@ -21,6 +22,10 @@ namespace bhd
 		void initInputAssembly();
 
 		void initViewport(float width, float height, float x = 0.0f, float y = 0.0f, float minDepth = 1.0f, float maxDepth = 1.0f);
+		void initViewport(const VkExtent2D & extent2D) {
+			initViewport((float)extent2D.width, (float)extent2D.height);
+		}
+
 
 		void initRasterizer();
 
@@ -36,21 +41,24 @@ namespace bhd
 
 		void initRenderPass(VkFormat format);
 
-		void createGraphicPipeline(std::vector<VkPipelineShaderStageCreateInfo> & shaderStages);
-
-
-		void init(float width, float height)
+		void initGraphicPipeline(const VulkanSwapChain & swapChain)
 		{
 			initVertexInput();
 			initInputAssembly();
-			initViewport(width, height);
+			initViewport(swapChain);
 			initRasterizer();
 			initMultisampling();
 			initDepthAndStencilTesting();
 			initColorBlending();
 			initDynamicState();
 			initLayout();
+			initRenderPass(swapChain);
 		}
+
+		VkResult createGraphicPipeline(VkDevice _device, const std::vector<VkPipelineShaderStageCreateInfo> & shaderStages);
+		VkResult createGraphicPipeline(VkDevice _device, const std::vector<VulkanShader> & shaderStages);
+
+
 
 		void release();
 
@@ -63,7 +71,6 @@ namespace bhd
 		VkSubpassDescription subpass = {};
 		VkRenderPassCreateInfo renderPassInfo = {};
 		VkRenderPass renderPass;
-
 
 
 		//Pipeline states
@@ -101,6 +108,7 @@ namespace bhd
 
 		
 		VkPipeline graphicsPipeline;
+
 	private:
 		VkDevice device;
 

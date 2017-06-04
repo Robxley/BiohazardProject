@@ -15,18 +15,26 @@
 #include "VulkanInstance.hpp"
 #include "VulkanSurface.hpp"
 #include "VulkanDevice.hpp"
+#include "VulkanShader.h"
+#include "VulkanGraphicPipeline.h"
+
+
 
 namespace bhd
 {
 	class BioVulkan
 	{
+
+		const char * default_vertex_shader = "shaders/default.vert.spv";
+		const char * default_fragment_shader = "shaders/default.frag.spv";
+
 	public:
 		//Main functions
 		//-------------------------------------
 
 		BioVulkan() {}
 		~BioVulkan() { 
-			release();
+			//release();
 		}
 
 		void release();
@@ -69,7 +77,11 @@ namespace bhd
 		//Swap Chain
 		VulkanSwapChain swapChain;
 
+		//Shader
+		std::vector<VulkanShader> shaderStages;
 
+		//Graphic pipeline
+		VulkanGraphicPipeline graphicPipeline;
 
 	}; //class BioVulkan
 
